@@ -1420,5 +1420,104 @@ function resetForm() {
   });
 })();
 </script>
+<script>
+// ── TUTORY SYSTEM INTEGRATION ──────────────────────────────────────────────
+// Otomatis simpan data siswa ke Supabase (students table) saat form selesai.
+// ───────────────────────────────────────────────────────────────────────────
+(function() {
+  const SUPA_URL = 'https://mebatevdljusyjdaooju.supabase.co';
+  const SUPA_KEY = 'sb_publishable_HyG9E9ZRtJArHNgfjZJsAQ_zzr6g_DZ';
+
+  // Pakai adminDb yang sudah ada di form, atau buat client baru
+  function getClient() {
+    if (typeof adminDb !== 'undefined') return adminDb;
+    return window.supabase?.createClient(SUPA_URL, SUPA_KEY) || null;
+  }
+
+  function uid() {
+    return 'reg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+  }
+
+  function getSelectedClass() {
+    const card = document.querySelector('.class-card.selected');
+    if (!card) return { name: '', type: 'group', hours: 0 };
+    const name = card.querySelector('.class-name')?.textContent?.trim() || '';
+    const type = card.closest('#class-grid-private')     ? 'private'
+               : card.closest('#class-grid-semiprivate') ? 'semi-private'
+               : 'group';
+    const meta = card.querySelector('.class-meta')?.textContent || '';
+    const match = meta.match(/(\d+)\s*(jam|hour|sesi|session)/i)
+                || name.match(/(\d+)\s*(jam|hour|sesi|session|x)/i);
+    return { name, type, hours: match ? parseInt(match[1]) : 0 };
+  }
+
+  function val(id) {
+    return (document.getElementById(id)?.value || '').trim();
+  }
+
+  async function writeToSupabase() {
+    const client = getClient();
+    if (!client) { console.warn('[Tutory] Supabase client not available'); return; }
+
+    const cls     = getSelectedClass();
+    const occ     = val('occupation') === 'Other' ? val('occupation-other') : val('occupation');
+    const purpose = val('purpose')    === 'Other' ? val('purpose-other')    : val('purpose');
+
+    const studentData = {
+      id:             uid(),
+      name:           val('fullname'),
+      nickname:       val('nickname'),
+      phone:          val('phone'),
+      email:          val('email'),
+      instagram:      val('instagram'),
+      gender:         val('gender'),
+      dob:            val('dob'),
+      occupation:     occ,
+      purpose:        purpose,
+      targetScore:    val('target-band'),
+      currentBand:    val('current-band'),
+      weakSkill:      val('weak-skill'),
+      source:         val('source'),
+      classType:      cls.type,
+      packageName:    cls.name,
+      totalHours:     cls.hours,
+      enrollmentDate: new Date().toISOString().split('T')[0],
+      status:         'active',
+      paymentStatus:  'belum',  // diubah manual ke 'lunas' setelah payment diverifikasi
+      addedBy:        'registration-form',
+      createdAt:      Date.now(),
+      registeredViaForm: true,
+    };
+
+    if (!studentData.name) return;
+
+    try {
+      const { error } = await client
+        .from('students')
+        .upsert({ id: studentData.id, data: studentData, updated_at: new Date().toISOString() });
+      if (error) console.error('[Tutory] Error:', error.message);
+      else console.log('[Tutory] ✅ Saved:', studentData.name);
+    } catch (e) {
+      console.error('[Tutory] Exception:', e);
+    }
+  }
+
+  // Deteksi saat success screen muncul → simpan ke Supabase
+  let _done = false;
+  const obs = new MutationObserver(function() {
+    if (_done) return;
+    const el = document.querySelector('.success-screen');
+    if (el && el.offsetParent !== null && el.style.display !== 'none') {
+      _done = true;
+      obs.disconnect();
+      writeToSupabase();
+    }
+  });
+  document.addEventListener('DOMContentLoaded', function() {
+    obs.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:['style','class'] });
+  });
+})();
+// ───────────────────────────────────────────────────────────────────────────
+</script>
 </body>
 </html>
