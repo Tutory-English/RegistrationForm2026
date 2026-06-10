@@ -1428,12 +1428,9 @@ function resetForm() {
   const SUPA_URL = 'https://mebatevdljusyjdaooju.supabase.co';
   const SUPA_KEY = 'sb_publishable_HyG9E9ZRtJArHNgfjZJsAQ_zzr6g_DZ';
 
-  // Pakai adminDb yang sudah ada di form, atau buat client baru
   function getClient() {
-    if (typeof adminDb !== 'undefined') return adminDb;
-    return window.supabase?.createClient(SUPA_URL, SUPA_KEY) || null;
-  }
-
+        return window.supabase?.createClient(SUPA_URL, SUPA_KEY) || null;
+    }
   function uid() {
     return 'reg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
   }
