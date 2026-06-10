@@ -1403,5 +1403,22 @@ function resetForm() {
   goStep(1);
 }
 </script>
+  <script>
+(function(){
+  var _orig = window.saveClassEdits;
+  window.saveClassEdits = async function(){
+    if(typeof _orig==='function') _orig();
+    try{ await adminDb.from('app_config').upsert({key:'classes',value:classes,updated_at:new Date().toISOString()}); }catch(e){}
+  };
+  document.addEventListener('DOMContentLoaded', async function(){
+    try{
+      var r = await adminDb.from('app_config').select('value').eq('key','classes').single();
+      if(!r.error && r.data && Array.isArray(r.data.value) && r.data.value.length>0){
+        classes=r.data.value; save('tutory_classes',classes); renderClassCards();
+      }
+    }catch(e){}
+  });
+})();
+</script>
 </body>
 </html>
