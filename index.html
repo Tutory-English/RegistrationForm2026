@@ -651,10 +651,10 @@ const DEFAULT_CLASSES = [
   { key: 'basic',       name: '⭐ Basic Coaching',              hours: '10 Hours', normalPrice: 3899000,  price: 1899000, type: 'private',     memberPrice: null, active: true },
   { key: 'intensive',   name: '⭐ Intensive Coaching',          hours: '20 Hours', normalPrice: 7999000,  price: 3199000, type: 'private',     memberPrice: null, active: true },
   { key: 'elite',       name: '⭐ ELITE Coaching',              hours: '40 Hours', normalPrice: 11699000, price: 5899000, type: 'private',     memberPrice: null, active: true },
-  { key: 'semiprivate', name: '⭐ Semi Private',                hours: '20 Hours', normalPrice: 1129000,  price: 935000,  type: 'semiprivate', memberPrice: null, active: true },
-  { key: 'wns',         name: 'Writing & Speaking Class',      hours: '15 Hours', normalPrice: 799000,   price: 489000,  type: 'group',       memberPrice: 439000, active: true },
-  { key: 'grammar',     name: 'Grammar Group Class',           hours: '10 Hours', normalPrice: 499000,   price: 279000,  type: 'group',       memberPrice: 229000, active: true },
-  { key: 'bundle',      name: 'Bundle Writing + Speaking + Grammar', hours: '25 Hours', normalPrice: 1298000, price: 749000, type: 'group', memberPrice: 649000, active: true },
+  { key: 'semiprivate', name: '⭐ Semi Private',                hours: '20 Hours', normalPrice: 945000,   price: 915000,  type: 'semiprivate', memberPrice: 899000, active: true },
+  { key: 'wns',         name: 'Writing & Speaking Class',      hours: '15 Hours', normalPrice: 489000,   price: 467000,  type: 'group',       memberPrice: 439000, active: true },
+  { key: 'grammar',     name: 'Grammar Group Class',           hours: '10 Hours', normalPrice: 279000,   price: 239000,  type: 'group',       memberPrice: 229000, active: true },
+  { key: 'bundle',      name: 'Bundle Writing + Speaking + Grammar', hours: '25 Hours', normalPrice: 749000,  price: 715000,  type: 'group',       memberPrice: 649000, active: true },
 ];
 
 // ============================================================
@@ -668,19 +668,6 @@ const storedPasswords = load('tutory_passwords', []);
 let adminPasswords = [...new Set([...DEFAULT_PASSWORDS, ...storedPasswords])];
 let waNumber       = load('tutory_wa', DEFAULT_WA);
 let classes        = load('tutory_classes', DEFAULT_CLASSES);
-
-async function loadClassesFromSupabase() {
-  try {
-    const { data, error } = await adminDb.from('app_config').select('value').eq('key','classes').single();
-    if (!error && data && Array.isArray(data.value) && data.value.length > 0) {
-      classes = data.value;
-      save('tutory_classes', classes);
-    }
-  } catch(e) {}
-}
-async function saveClassesToSupabase() {
-  try { await adminDb.from('app_config').upsert({ key: 'classes', value: classes, updated_at: new Date().toISOString() }); } catch(e) {}
-}
 let registrations  = load('tutory_registrations', []);
 let memberCodes    = load('tutory_member_codes', MEMBER_CODES_DEFAULT);
 let usedCodes      = load('tutory_used_codes', []);
@@ -1402,119 +1389,6 @@ function resetForm() {
   selectedClass=null; memberCodeApplied=false; appliedCode=null;
   goStep(1);
 }
-</script>
-  <script>
-(function(){
-  var _orig = window.saveClassEdits;
-  window.saveClassEdits = async function(){
-    if(typeof _orig==='function') _orig();
-    try{ await adminDb.from('app_config').upsert({key:'classes',value:classes,updated_at:new Date().toISOString()}); }catch(e){}
-  };
-  document.addEventListener('DOMContentLoaded', async function(){
-    try{
-      var r = await adminDb.from('app_config').select('value').eq('key','classes').single();
-      if(!r.error && r.data && Array.isArray(r.data.value) && r.data.value.length>0){
-        classes=r.data.value; save('tutory_classes',classes); renderClassCards();
-      }
-    }catch(e){}
-  });
-})();
-</script>
-<script>
-// ── TUTORY SYSTEM INTEGRATION ──────────────────────────────────────────────
-// Otomatis simpan data siswa ke Supabase (students table) saat form selesai.
-// ───────────────────────────────────────────────────────────────────────────
-(function() {
-  const SUPA_URL = 'https://mebatevdljusyjdaooju.supabase.co';
-  const SUPA_KEY = 'sb_publishable_HyG9E9ZRtJArHNgfjZJsAQ_zzr6g_DZ';
-
-  function getClient() {
-        return window.supabase?.createClient(SUPA_URL, SUPA_KEY) || null;
-    }
-  function uid() {
-    return 'reg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-  }
-
-  function getSelectedClass() {
-    const card = document.querySelector('.class-card.selected');
-    if (!card) return { name: '', type: 'group', hours: 0 };
-    const name = card.querySelector('.class-name')?.textContent?.trim() || '';
-    const type = card.closest('#class-grid-private')     ? 'private'
-               : card.closest('#class-grid-semiprivate') ? 'semi-private'
-               : 'group';
-    const meta = card.querySelector('.class-meta')?.textContent || '';
-    const match = meta.match(/(\d+)\s*(jam|hour|sesi|session)/i)
-                || name.match(/(\d+)\s*(jam|hour|sesi|session|x)/i);
-    return { name, type, hours: match ? parseInt(match[1]) : 0 };
-  }
-
-  function val(id) {
-    return (document.getElementById(id)?.value || '').trim();
-  }
-
-  async function writeToSupabase() {
-    const client = getClient();
-    if (!client) { console.warn('[Tutory] Supabase client not available'); return; }
-
-    const cls     = getSelectedClass();
-    const occ     = val('occupation') === 'Other' ? val('occupation-other') : val('occupation');
-    const purpose = val('purpose')    === 'Other' ? val('purpose-other')    : val('purpose');
-
-    const studentData = {
-      id:             uid(),
-      name:           val('fullname'),
-      nickname:       val('nickname'),
-      phone:          val('phone'),
-      email:          val('email'),
-      instagram:      val('instagram'),
-      gender:         val('gender'),
-      dob:            val('dob'),
-      occupation:     occ,
-      purpose:        purpose,
-      targetScore:    val('target-band'),
-      currentBand:    val('current-band'),
-      weakSkill:      val('weak-skill'),
-      source:         val('source'),
-      classType:      cls.type,
-      packageName:    cls.name,
-      totalHours:     cls.hours,
-      enrollmentDate: new Date().toISOString().split('T')[0],
-      status:         'active',
-      paymentStatus:  'belum',  // diubah manual ke 'lunas' setelah payment diverifikasi
-      addedBy:        'registration-form',
-      createdAt:      Date.now(),
-      registeredViaForm: true,
-    };
-
-    if (!studentData.name) return;
-
-    try {
-      const { error } = await client
-        .from('students')
-        .upsert({ id: studentData.id, data: studentData, updated_at: new Date().toISOString() });
-      if (error) console.error('[Tutory] Error:', error.message);
-      else console.log('[Tutory] ✅ Saved:', studentData.name);
-    } catch (e) {
-      console.error('[Tutory] Exception:', e);
-    }
-  }
-
-  // Deteksi saat success screen muncul → simpan ke Supabase
-  let _done = false;
-  const obs = new MutationObserver(function() {
-    if (_done) return;
-    const el = document.querySelector('.success-screen');
-    if (el && el.offsetParent !== null && el.style.display !== 'none') {
-      _done = true;
-      obs.disconnect();
-      writeToSupabase();
-    }
-  });
-  document.addEventListener('DOMContentLoaded', function() {
-    obs.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:['style','class'] });
-  });
-})();
-// ───────────────────────────────────────────────────────────────────────────
 </script>
 </body>
 </html>
