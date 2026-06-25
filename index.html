@@ -71,6 +71,12 @@
   .price-promo { font-size: 1.1rem; font-weight: 700; color: var(--blue); }
   .badge { display: inline-block; font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; margin-left: 8px; vertical-align: middle; }
   .badge-type { background: var(--blue-light); color: var(--blue); }
+  .benefit-panel { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: .81rem; color: var(--text); animation: fadeDown .2s ease; }
+  .benefit-title { font-weight: 700; font-size: .82rem; color: var(--blue); margin-bottom: 6px; }
+  .benefit-desc { color: var(--gray); margin-bottom: 8px; line-height: 1.5; }
+  .benefit-list { padding-left: 18px; line-height: 1.6; margin: 0; }
+  .benefit-list li { margin-bottom: 4px; }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
   .check-icon { position: absolute; right: 14px; top: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--blue); color: white; display: none; align-items: center; justify-content: center; font-size: .75rem; }
   .class-card.selected .check-icon { display: flex; }
 
@@ -381,10 +387,7 @@
         <div style="font-weight:700;font-size:.9rem;margin-bottom:10px;color:#374151;">Private Class</div>
         <div class="class-grid" id="class-grid-private"></div>
 
-        <div style="font-weight:700;font-size:.9rem;margin:16px 0 10px;color:#374151;">Semi Private Class</div>
-        <div class="class-grid" id="class-grid-semiprivate"></div>
-
-        <div style="font-weight:700;font-size:.9rem;margin:16px 0 10px;color:#374151;">Group Class <span style="font-size:.75rem;font-weight:400;color:var(--gray)">(member discount available)</span></div>
+        <div style="font-weight:700;font-size:.9rem;margin:16px 0 10px;color:#374151;">Group Class <span style="font-size:.75rem;font-weight:400;color:var(--gray)">(includes Semi Private · member discount available)</span></div>
         <div class="class-grid" id="class-grid-group"></div>
 
         <div class="field-error" id="f-class-err" style="display:none;font-size:.85rem;margin-top:12px;">Please select a class to continue</div>
@@ -445,8 +448,8 @@
         <div style="background:#f8faff;border:1.5px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px;">
           <div style="font-weight:700;font-size:.88rem;margin-bottom:10px;">🏦 Or Bank Transfer</div>
           <div style="font-size:.88rem;line-height:2;">
-            <strong>BCA</strong> – 8670059902<br>
-            a/n <strong>El Sheren Elieswati</strong><br>
+            <strong>Mandiri</strong> – 1550055576550<br>
+            a/n <strong>LENTERA INDONESIA GROUP</strong><br>
             <span style="font-size:.78rem;color:var(--gray);">Transfer description: your full name</span>
           </div>
         </div>
@@ -469,6 +472,26 @@
         <div class="field">
           <label>Notes / Questions (optional)</label>
           <textarea id="notes" placeholder="Any questions or notes for the Tutory team..."></textarea>
+        </div>
+
+        <!-- REFUND POLICY AGREEMENT -->
+        <div class="field" id="f-refund-agree">
+          <div style="border:1.5px solid var(--border);border-radius:10px;padding:16px;background:#f8faff;">
+            <div style="font-weight:700;font-size:.9rem;margin-bottom:8px;">📄 Refund Policy Agreement</div>
+            <div style="font-size:.8rem;color:var(--gray);margin-bottom:10px;">Please read the policy carefully before confirming your registration.</div>
+            <ol style="font-size:.82rem;color:var(--text);line-height:1.7;padding-left:18px;margin-bottom:12px;">
+              <li>Payments that have been completed cannot be refunded if the participant cancels the class.</li>
+              <li>If cancellation happens due to participant error (for example: wrong schedule selection), the refund amount will be 80% of the total payment.</li>
+              <li>If cancellation occurs due to management error from Tutory English, the refund will be 100% of the payment.</li>
+              <li>The refund process will take up to 5 working days after the request is approved.</li>
+              <li>Classes that have been taken are non-transferable and cannot be rescheduled to another program or time by the student.</li>
+            </ol>
+            <label style="display:flex;align-items:flex-start;gap:8px;font-size:.85rem;cursor:pointer;">
+              <input type="checkbox" id="refund-agree-checkbox" style="margin-top:3px;flex-shrink:0;">
+              <span>I have read and agree to the Refund Policy above. <span class="req">*</span></span>
+            </label>
+          </div>
+          <div class="field-error" id="f-refund-agree-err" style="display:none">Please agree to the Refund Policy to continue</div>
         </div>
 
         <div class="btn-row" style="flex-direction:column;">
@@ -651,11 +674,130 @@ const DEFAULT_CLASSES = [
   { key: 'basic',       name: '⭐ Basic Coaching',              hours: '10 Hours', normalPrice: 3899000,  price: 1899000, type: 'private',     memberPrice: null, active: true },
   { key: 'intensive',   name: '⭐ Intensive Coaching',          hours: '20 Hours', normalPrice: 7999000,  price: 3199000, type: 'private',     memberPrice: null, active: true },
   { key: 'elite',       name: '⭐ ELITE Coaching',              hours: '40 Hours', normalPrice: 11699000, price: 5899000, type: 'private',     memberPrice: null, active: true },
-  { key: 'semiprivate', name: '⭐ Semi Private',                hours: '20 Hours', normalPrice: 945000,   price: 915000,  type: 'semiprivate', memberPrice: 899000, active: true },
-  { key: 'wns',         name: 'Writing & Speaking Class',      hours: '15 Hours', normalPrice: 489000,   price: 467000,  type: 'group',       memberPrice: 439000, active: true },
+  { key: 'semiprivate', name: '⭐ Semi Private',                hours: '20 Hours', normalPrice: 945000,   price: 899000,  type: 'semiprivate', memberPrice: 879000, active: true },
+  { key: 'wns',         name: 'Writing & Speaking Class',      hours: '15 Hours', normalPrice: 489000,   price: 459000,  type: 'group',       memberPrice: 439000, active: true },
   { key: 'grammar',     name: 'Grammar Group Class',           hours: '10 Hours', normalPrice: 279000,   price: 239000,  type: 'group',       memberPrice: 229000, active: true },
-  { key: 'bundle',      name: 'Bundle Writing + Speaking + Grammar', hours: '25 Hours', normalPrice: 749000,  price: 715000,  type: 'group',       memberPrice: 649000, active: true },
+  { key: 'bundle',      name: 'Bundle Writing + Speaking + Grammar', hours: '25 Hours', normalPrice: 749000,  price: 699000,  type: 'group',       memberPrice: 649000, active: true },
+  { key: 'general_english',       name: 'General English',      hours: '20 Hours', normalPrice: 5750000, price: 2299000, type: 'private', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
+  { key: 'conversation_english',  name: 'Conversation English', hours: '15 Hours', normalPrice: 4750000, price: 1899000, type: 'private', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
+  { key: 'business_english',      name: 'Business English',     hours: '15 Hours', normalPrice: 4750000, price: 1899000, type: 'private', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
 ];
+
+// Detail benefit & deskripsi tiap kelas (sumber: June Pricelist V.2)
+const CLASS_BENEFITS = {
+  express: {
+    items: [
+      'No band improvement guarantee',
+      'Free 1 simulation test',
+      'Writing correction & speaking mock with feedback',
+      'Free detailed progress report',
+      'Flexible time arrangement'
+    ]
+  },
+  basic: {
+    items: [
+      'Band guarantee: +0.5 (Band 4.0→5.0)*, +0.5 (Band ≥5.5)*',
+      'Diagnostic test + 1 progress test',
+      '2 post-tests with improvement evaluation',
+      'Writing correction & speaking mock with feedback',
+      'Free detailed progress report',
+      'Flexible time arrangement',
+      'More personalized learning material and feedback'
+    ]
+  },
+  intensive: {
+    items: [
+      'Band guarantee: +1 (Band 4.0→5.0)*, +0.5 (Band ≥5.5)*',
+      'Diagnostic test + 1 progress test',
+      '3 post-tests with improvement evaluation',
+      'Writing correction & speaking mock with feedback',
+      'Final readiness evaluation + detailed performance report',
+      'Flexible time arrangement',
+      'More personalized learning material and feedback'
+    ]
+  },
+  elite: {
+    items: [
+      'Band guarantee: +1 (Band 4.0→5.0)*, +0.5 (Band ≥5.5)*',
+      'Diagnostic test + 2 progress tests',
+      '3 post-tests with improvement evaluation',
+      'Writing correction & speaking mock with feedback',
+      'Final readiness evaluation + detailed performance report',
+      'Flexible time arrangement',
+      'More personalized learning material and feedback'
+    ]
+  },
+  semiprivate: {
+    desc: 'Max. 8 Students',
+    items: [
+      'Band improvement guarantee up to +0.5*',
+      'Diagnostic test + 1 progress test',
+      '2 post-tests with improvement evaluation',
+      'Free detailed progress report',
+      'More personalized learning material and feedback'
+    ]
+  },
+  wns: {
+    desc: 'Perfect for students who want to improve their IELTS Writing and Speaking performance through guided practice, personalized feedback, and targeted strategies to boost their band score. (Max. 15 Students)',
+    items: [
+      'Free IELTS Post-Test (All 4 Skills)',
+      'Free Class Recordings',
+      'Free Access to Tutory Community',
+      'Weekly online discussion sessions',
+      'Practice together with other IELTS learners',
+      'Get additional tips, resources, and support'
+    ]
+  },
+  grammar: {
+    desc: 'The perfect starting point for IELTS beginners. Strengthen your grammar foundation, improve sentence accuracy, and build the confidence needed to tackle all IELTS skills. (Max. 15 Students)',
+    items: [
+      'Free IELTS Post-Test (All 4 Skills)',
+      'Free Class Recordings',
+      'Free Access to Tutory Community',
+      'Weekly online discussion sessions',
+      'Practice together with other IELTS learners',
+      'Get additional tips, resources, and support'
+    ]
+  },
+  bundle: {
+    desc: 'Combines Writing & Speaking and Grammar classes for the most complete IELTS group preparation package.',
+    items: [
+      'Includes all Writing & Speaking Class benefits',
+      'Includes all Grammar Class benefits',
+      'Free IELTS Post-Test (All 4 Skills)',
+      'Free Class Recordings',
+      'Free Access to Tutory Community',
+      'Most comprehensive & best value group package'
+    ]
+  },
+  general_english: {
+    desc: 'For improving general English skills — not for IELTS test preparation.',
+    items: [
+      'Focuses on 4 core skills: grammar, vocabulary, listening & speaking',
+      'Suitable for beginner to intermediate level',
+      'Material tailored to daily/academic needs',
+      'Free detailed progress report'
+    ]
+  },
+  conversation_english: {
+    desc: 'For improving general English skills — not for IELTS test preparation.',
+    items: [
+      'Focuses on speaking & fluency through real conversation scenarios',
+      'Interactive practice with a tutor, not just theory memorization',
+      'Great for interview prep, travel, or networking',
+      'Pronunciation feedback & confidence building'
+    ]
+  },
+  business_english: {
+    desc: 'For improving general English skills — not for IELTS test preparation.',
+    items: [
+      'Focuses on professional communication: email, presentations & meetings',
+      'Case studies & roleplay tailored to industry needs',
+      'Suitable for professionals and corporate employees',
+      'Personal feedback from tutor'
+    ]
+  }
+};
 
 // ============================================================
 // STATE (loaded from localStorage)
@@ -714,23 +856,39 @@ document.addEventListener('DOMContentLoaded', async () => {
 // CLASS CARDS RENDER
 // ============================================================
 function renderClassCards() {
-  ['private','semiprivate','group'].forEach(type => {
-    const grid = document.getElementById('class-grid-' + type);
+  // Two visual sections: Private Class grid, and Group Class grid (Semi Private folded into Group)
+  const sectionMap = {
+    'class-grid-private': ['private'],
+    'class-grid-group':   ['semiprivate', 'group']
+  };
+  Object.entries(sectionMap).forEach(([gridId, types]) => {
+    const grid = document.getElementById(gridId);
     if (!grid) return;
     grid.innerHTML = '';
-    classes.filter(c => c.type === type && c.active).forEach(c => {
+    classes.filter(c => types.includes(c.type) && c.active).forEach(c => {
       const isGroup = c.type === 'group';
+      const promoPct = (c.normalPrice > c.price) ? Math.round((c.normalPrice - c.price) / c.normalPrice * 100) : 0;
+      const benefit = CLASS_BENEFITS[c.key];
+      const metaExtra = c.capacity ? ` · ${c.capacity}` : (isGroup ? ' · Up to 15 students' : '');
       grid.innerHTML += `
         <label class="class-card" id="cc-${c.key}">
           <input type="radio" name="classChoice" value="${c.key}" onchange="selectClass(this)">
           <div class="check-icon">✓</div>
-          <div class="class-name">${c.name} <span class="badge badge-type">${c.type === 'semiprivate' ? 'Semi Private' : c.type === 'group' ? 'Group' : 'Private'}</span></div>
-          <div class="class-meta">${c.hours}${isGroup ? ' · Up to 15 students' : ''}</div>
+          <div class="class-name">${c.name} <span class="badge badge-type">${c.type === 'semiprivate' ? 'Semi Private' : c.type === 'group' ? 'Group' : 'Private'}</span>${c.type === 'private' && promoPct > 0 ? ` <span class="badge" style="background:#fee2e2;color:#dc2626;">Promo ${promoPct}%</span>` : ''}</div>
+          <div class="class-meta">${c.hours}${metaExtra}</div>
           <div class="class-price">
-            <div class="price-normal">IDR ${fmt(c.normalPrice)}</div>
+            ${promoPct > 0 ? `<div class="price-normal">IDR ${fmt(c.normalPrice)}</div>` : ''}
             <div class="price-promo">IDR ${fmt(c.price)}${c.memberPrice ? ' <span style="font-size:.75rem;color:var(--gray)">(non-member)</span>' : ''}</div>
             ${c.memberPrice ? `<div style="font-size:.8rem;color:var(--green);margin-top:2px;">IDR ${fmt(c.memberPrice)} with member code</div>` : ''}
           </div>
+          ${benefit ? `
+          <div class="benefit-panel" id="benefit-panel-${c.key}" style="display:none;">
+            <div class="benefit-title">✨ What you'll get:</div>
+            ${benefit.desc ? `<div class="benefit-desc">${benefit.desc}</div>` : ''}
+            <ul class="benefit-list">
+              ${benefit.items.map(b => `<li>${b}</li>`).join('')}
+            </ul>
+          </div>` : ''}
         </label>`;
     });
   });
@@ -822,6 +980,11 @@ function selectClass(radio) {
   radio.closest('.class-card').classList.add('selected');
   selectedClass = radio.value;
   document.getElementById('f-class-err').style.display = 'none';
+
+  // Auto show benefit panel of the selected class only, hide all others
+  document.querySelectorAll('.benefit-panel').forEach(p => p.style.display = 'none');
+  const panel = document.getElementById('benefit-panel-' + radio.value);
+  if (panel) panel.style.display = 'block';
 }
 
 // ============================================================
@@ -902,6 +1065,14 @@ async function submitForm() {
   const proof = document.getElementById('proof-file').files[0];
   if (!proof) { document.getElementById('f-proof-err').style.display='block'; return; }
   document.getElementById('f-proof-err').style.display='none';
+
+  const agreed = document.getElementById('refund-agree-checkbox').checked;
+  if (!agreed) {
+    document.getElementById('f-refund-agree-err').style.display='block';
+    document.getElementById('f-refund-agree-err').scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  document.getElementById('f-refund-agree-err').style.display='none';
 
   const info = classes.find(c => c.key === selectedClass);
   const occVal = document.getElementById('occupation').value;
