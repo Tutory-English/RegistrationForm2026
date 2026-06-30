@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tutory English – Student Registration</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --blue: #1a56db;
@@ -560,6 +561,7 @@
       <h3>📊 Admin Panel – Tutory English</h3>
       <div id="admin-action-btns" style="display:none;gap:8px;flex-wrap:wrap;">
         <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="btn-export" onclick="exportXLSX()">⬇ Export Excel (.xlsx)</button>
         <button class="btn-danger" onclick="clearAllData()">🗑 Clear Data</button>
       </div>
     </div>
@@ -684,6 +686,27 @@ try {
   );
 } catch(e) {
   console.error('Supabase init failed:', e);
+}
+
+// ============================================================
+// GOOGLE SHEET LIVE SYNC (mirror copy of every registration)
+// ============================================================
+// Paste your deployed Google Apps Script Web App URL here (ends in /exec).
+// Leave as '' to skip Google Sheet sync entirely — Supabase still works either way.
+const GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyn48PsPyol_IYe3WHYBUuWvpVjTq4VtX_C2nIWZqBSJ7_MJHZkUbrDtbKYyBgfz7VSVQ/exec';
+
+function syncToGoogleSheet(reg) {
+  if (!GOOGLE_SHEET_WEBHOOK_URL) return;
+  try {
+    fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Apps Script doesn't return CORS headers; fire-and-forget is fine, this is just a mirror copy
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids CORS preflight
+      body: JSON.stringify(reg)
+    }).catch(err => console.warn('Google Sheet sync failed (non-blocking):', err));
+  } catch (err) {
+    console.warn('Google Sheet sync failed (non-blocking):', err);
+  }
 }
 
 // ============================================================
@@ -1304,6 +1327,9 @@ async function submitForm() {
     // Don't alert user — registration still succeeded
   }
 
+  // 3. Mirror copy to Google Sheet (non-blocking, skipped if no webhook URL set)
+  syncToGoogleSheet(reg);
+
   document.getElementById('success-name').textContent = reg.fullname;
   document.getElementById('success-class').textContent = info.name;
   document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
@@ -1643,6 +1669,28 @@ async function exportCSV() {
   const a = document.createElement('a');
   a.href=url; a.download='tutory_registrations_'+new Date().toISOString().slice(0,10)+'.csv';
   a.click(); URL.revokeObjectURL(url);
+}
+
+async function exportXLSX() {
+  const { data, error } = await db.from('registrations').select('*').order('created_at', { ascending: false });
+  if (error) { alert('Gagal mengambil data: ' + error.message); return; }
+  if (!data || data.length === 0) { alert('No registrations to export.'); return; }
+
+  const headers = ['#','Date','Full Name','Nickname','DOB','Gender','Email','Phone','Instagram','Occupation','Purpose','Target Band','Source','Current Level','Weak Skill','Class','Hours','Amount (IDR)','Member Code','Notes'];
+  const rows = data.map((r,i) => [
+    i+1,
+    new Date(r.created_at).toLocaleString('id-ID'),
+    r.fullname, r.nickname, r.dob, r.gender,
+    r.email, r.phone, r.instagram, r.occupation, r.purpose,
+    r.target_band, r.source, r.current_band, r.weak_skill,
+    r.class_name, r.class_hours, r.amount_paid, r.member_code, r.notes
+  ]);
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  ws['!cols'] = headers.map(() => ({ wch: 18 }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Registrations');
+  XLSX.writeFile(wb, 'tutory_registrations_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 
 function clearAllData() {
