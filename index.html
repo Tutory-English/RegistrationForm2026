@@ -391,7 +391,36 @@
         <div style="font-weight:700;font-size:.9rem;margin:16px 0 10px;color:#374151;">Group Class <span style="font-size:.75rem;font-weight:400;color:var(--gray)">(includes Semi Private · member discount available)</span></div>
         <div class="class-grid" id="class-grid-group"></div>
 
+        <div style="font-weight:700;font-size:.9rem;margin:16px 0 10px;color:#374151;">📋 Preparation Class + Official Test Package <span style="font-size:.75rem;font-weight:400;color:var(--gray)">(in collaboration with IDP IELTS)</span></div>
+        <div class="class-grid" id="class-grid-idp"></div>
+
         <div class="field-error" id="f-class-err" style="display:none;font-size:.85rem;margin-top:12px;">Please select a class to continue</div>
+
+        <!-- IDP-ONLY DOCUMENTS -->
+        <div id="idp-docs-section" style="display:none;margin-top:16px;border:1.5px solid var(--border);border-radius:10px;padding:16px;background:#f8faff;">
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:4px;">🪪 Required for IDP Application</div>
+          <div style="font-size:.8rem;color:var(--gray);margin-bottom:14px;">Since this package includes official IELTS test registration via IDP, we need your ID and photo for the application.</div>
+
+          <div class="field" id="f-ktp-number">
+            <label>KTP Number (NIK) <span class="req">*</span></label>
+            <input type="text" id="ktp-number" placeholder="e.g. 3201234567890001" inputmode="numeric">
+            <div class="field-error">Please enter your KTP number</div>
+          </div>
+
+          <div class="field" id="f-passport-photo">
+            <label>Pass Photo (Formal Photo) <span class="req">*</span></label>
+            <div class="upload-area">
+              <input type="file" id="passport-photo-file" accept="image/*" onchange="handlePassportPhotoUpload(this)">
+              <div class="upload-icon">🖼️</div>
+              <div class="upload-text"><strong>Click to upload</strong> or drag & drop<br>JPG or PNG · max 5MB</div>
+              <div class="upload-preview" id="passport-photo-preview">
+                <img id="passport-photo-preview-img" src="" alt="Preview">
+                <div id="passport-photo-preview-name" style="font-size:.8rem;color:var(--gray);margin-top:6px;"></div>
+              </div>
+            </div>
+            <div class="field-error" id="f-passport-photo-err" style="display:none">Please upload your pass photo</div>
+          </div>
+        </div>
 
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
@@ -682,6 +711,9 @@ const DEFAULT_CLASSES = [
   { key: 'general_english',       name: 'General English',      hours: '20 Hours', normalPrice: 5750000, price: 2299000, type: 'private', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
   { key: 'conversation_english',  name: 'Conversation English', hours: '15 Hours', normalPrice: 4750000, price: 1899000, type: 'private', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
   { key: 'business_english',      name: 'Business English',     hours: '15 Hours', normalPrice: 4750000, price: 1899000, type: 'private', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
+  { key: 'idp_test',   name: 'IELTS by IDP',                          hours: 'Official Test',                  normalPrice: 3490000, price: 3490000, type: 'idp', memberPrice: null, active: true },
+  { key: 'idp_prep5',  name: 'Preparation Class (5h) + IELTS by IDP', hours: '5 Hours prep + Official Test',   normalPrice: 3990000, price: 3990000, type: 'idp', memberPrice: null, active: true },
+  { key: 'idp_prep10', name: 'Preparation Class (10h) + IELTS by IDP',hours: '10 Hours prep + Official Test',  normalPrice: 6990000, price: 6990000, type: 'idp', memberPrice: null, active: true },
 ];
 
 // Detail benefit & deskripsi tiap kelas (sumber: June Pricelist V.2)
@@ -797,6 +829,36 @@ const CLASS_BENEFITS = {
       'Suitable for professionals and corporate employees',
       'Personal feedback from tutor'
     ]
+  },
+  idp_test: {
+    desc: 'Tutory English collaborates directly with IDP IELTS to provide comprehensive, end-to-end support for students planning to study abroad.',
+    items: [
+      'Visa Preparation Assistance — step-by-step guidance throughout the visa application process',
+      'Accommodation Search Support — help finding safe, comfortable, and budget-appropriate housing',
+      'University Placement Guidance — support identifying and applying to universities that match your goals',
+      'Document Preparation — assistance organizing academic records, personal statements, and other materials',
+      'IELTS Test Registration and Preparation — official IDP test registration facilitated directly by Tutory'
+    ]
+  },
+  idp_prep5: {
+    desc: 'Tutory English collaborates directly with IDP IELTS to provide comprehensive, end-to-end support for students planning to study abroad.',
+    items: [
+      'Visa Preparation Assistance — step-by-step guidance throughout the visa application process',
+      'Accommodation Search Support — help finding safe, comfortable, and budget-appropriate housing',
+      'University Placement Guidance — support identifying and applying to universities that match your goals',
+      'Document Preparation — assistance organizing academic records, personal statements, and other materials',
+      'IELTS Test Registration and Preparation — official IDP test registration + 5 hours structured preparation'
+    ]
+  },
+  idp_prep10: {
+    desc: 'Tutory English collaborates directly with IDP IELTS to provide comprehensive, end-to-end support for students planning to study abroad.',
+    items: [
+      'Visa Preparation Assistance — step-by-step guidance throughout the visa application process',
+      'Accommodation Search Support — help finding safe, comfortable, and budget-appropriate housing',
+      'University Placement Guidance — support identifying and applying to universities that match your goals',
+      'Document Preparation — assistance organizing academic records, personal statements, and other materials',
+      'IELTS Test Registration and Preparation — official IDP test registration + 10 hours structured preparation'
+    ]
   }
 };
 
@@ -860,7 +922,8 @@ function renderClassCards() {
   // Two visual sections: Private Class grid, and Group Class grid (Semi Private folded into Group)
   const sectionMap = {
     'class-grid-private': ['private'],
-    'class-grid-group':   ['semiprivate', 'group']
+    'class-grid-group':   ['semiprivate', 'group'],
+    'class-grid-idp':     ['idp']
   };
   Object.entries(sectionMap).forEach(([gridId, types]) => {
     const grid = document.getElementById(gridId);
@@ -875,7 +938,7 @@ function renderClassCards() {
         <label class="class-card" id="cc-${c.key}">
           <input type="radio" name="classChoice" value="${c.key}" onchange="selectClass(this)">
           <div class="check-icon">✓</div>
-          <div class="class-name">${c.name} <span class="badge badge-type">${c.type === 'semiprivate' ? 'Semi Private' : c.type === 'group' ? 'Group' : 'Private'}</span>${c.type === 'private' && promoPct > 0 ? ` <span class="badge" style="background:#fee2e2;color:#dc2626;">Promo ${promoPct}%</span>` : ''}</div>
+          <div class="class-name">${c.name} <span class="badge badge-type">${c.type === 'semiprivate' ? 'Semi Private' : c.type === 'group' ? 'Group' : c.type === 'idp' ? 'IDP' : 'Private'}</span>${c.type === 'private' && promoPct > 0 ? ` <span class="badge" style="background:#fee2e2;color:#dc2626;">Promo ${promoPct}%</span>` : ''}</div>
           <div class="class-meta">${c.hours}${metaExtra}</div>
           <div class="class-price">
             ${promoPct > 0 ? `<div class="price-normal">IDR ${fmt(c.normalPrice)}</div>` : ''}
@@ -942,6 +1005,14 @@ function validateStep(step) {
     ok = req('weak-skill','f-weak-skill') && ok;
     if (!selectedClass) { document.getElementById('f-class-err').style.display='block'; ok = false; }
     else document.getElementById('f-class-err').style.display='none';
+
+    const selInfo = classes.find(c => c.key === selectedClass);
+    if (selInfo && selInfo.type === 'idp') {
+      ok = req('ktp-number','f-ktp-number') && ok;
+      const photoFile = document.getElementById('passport-photo-file').files[0];
+      if (!photoFile) { document.getElementById('f-passport-photo-err').style.display='block'; ok = false; }
+      else document.getElementById('f-passport-photo-err').style.display='none';
+    }
     return ok;
   }
   return true;
@@ -986,6 +1057,11 @@ function selectClass(radio) {
   document.querySelectorAll('.benefit-panel').forEach(p => p.style.display = 'none');
   const panel = document.getElementById('benefit-panel-' + radio.value);
   if (panel) panel.style.display = 'block';
+
+  // Show KTP + Pass Photo section only for IDP packages (needed for official test application)
+  const info = classes.find(c => c.key === radio.value);
+  const idpSection = document.getElementById('idp-docs-section');
+  if (idpSection) idpSection.style.display = (info && info.type === 'idp') ? 'block' : 'none';
 }
 
 // ============================================================
@@ -1059,6 +1135,22 @@ function handleUpload(input) {
   document.getElementById('f-proof-err').style.display = 'none';
 }
 
+function handlePassportPhotoUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const preview = document.getElementById('passport-photo-preview');
+  const previewImg = document.getElementById('passport-photo-preview-img');
+  const previewName = document.getElementById('passport-photo-preview-name');
+  previewName.textContent = file.name + ' (' + (file.size/1024).toFixed(0) + ' KB)';
+  if (file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = e => { previewImg.src = e.target.result; previewImg.style.display='block'; };
+    reader.readAsDataURL(file);
+  } else { previewImg.style.display='none'; }
+  preview.style.display = 'block';
+  document.getElementById('f-passport-photo-err').style.display = 'none';
+}
+
 // ============================================================
 // SUBMIT
 // ============================================================
@@ -1078,6 +1170,16 @@ async function submitForm() {
   const info = classes.find(c => c.key === selectedClass);
   const occVal = document.getElementById('occupation').value;
   const purposeVal = document.getElementById('purpose').value;
+
+  // IDP-only documents (KTP number + pass photo) — appended into notes since
+  // there's no dedicated column for these in the registrations table.
+  let notesVal = document.getElementById('notes').value;
+  if (info.type === 'idp') {
+    const ktpVal = document.getElementById('ktp-number').value.trim();
+    const photoFile = document.getElementById('passport-photo-file').files[0];
+    const idpNote = `[IDP Application] KTP Number: ${ktpVal} | Pass Photo file: ${photoFile ? photoFile.name : '-'}`;
+    notesVal = notesVal ? `${idpNote}\n${notesVal}` : idpNote;
+  }
 
   const reg = {
     id: Date.now(),
@@ -1100,7 +1202,7 @@ async function submitForm() {
     classHours: info.hours,
     amountPaid: currentPrice,
     memberCode: appliedCode || '',
-    notes: document.getElementById('notes').value,
+    notes: notesVal,
   };
 
   if (appliedCode) {
@@ -1150,7 +1252,7 @@ async function submitForm() {
   }
 
   // 2. Also send to Admin Management System (students table)
-  const classTypeMap = { private: 'Private', semiprivate: 'Semi private', group: 'Group class', wns: 'Group class', grammar: 'Group class', bundle: 'Group class' };
+  const classTypeMap = { private: 'Private', semiprivate: 'Semi private', group: 'Group class', wns: 'Group class', grammar: 'Group class', bundle: 'Group class', idp_test: 'IDP Package', idp_prep5: 'IDP Package', idp_prep10: 'IDP Package' };
   const adminClassType = classTypeMap[reg.classKey] || 'Private';
 
   // Get next student number from admin db
@@ -1160,7 +1262,7 @@ async function submitForm() {
     .map(sn => { const m = sn.match(/(\d+)\s*$/); return m ? parseInt(m[1]) : 0; })
     .filter(n => n > 0);
   const nextNum = (numbers.length ? Math.max(...numbers) : 0) + 1;
-  const prefixMap = { 'Private': 'PVT', 'Semi private': 'SPVT', 'Group class': 'GC' };
+  const prefixMap = { 'Private': 'PVT', 'Semi private': 'SPVT', 'Group class': 'GC', 'IDP Package': 'IDP' };
   const studentNumber = `${prefixMap[adminClassType] || 'REG'}-${new Date().getFullYear()}-${String(nextNum).padStart(3,'0')}`;
 
   const adminStudentData = {
@@ -1362,6 +1464,7 @@ function renderClassEditor() {
             <option value="private" ${c.type==='private'?'selected':''}>Private</option>
             <option value="semiprivate" ${c.type==='semiprivate'?'selected':''}>Semi Private</option>
             <option value="group" ${c.type==='group'?'selected':''}>Group</option>
+            <option value="idp" ${c.type==='idp'?'selected':''}>IDP Package</option>
           </select>
         </div>
         <div class="toggle-wrap">
