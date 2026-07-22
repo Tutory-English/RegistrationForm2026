@@ -1016,7 +1016,18 @@ function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); 
 const storedPasswords = load('tutory_passwords', []);
 let adminPasswords = [...new Set([...DEFAULT_PASSWORDS, ...storedPasswords])];
 let waNumber       = load('tutory_wa', DEFAULT_WA);
-let classes        = load('tutory_classes', DEFAULT_CLASSES);
+function migrateClasses(arr) {
+  // Backward-compat: add category field if missing (old cached/Supabase data)
+  const keyToCat = {
+    express:'ielts_prep', basic:'ielts_prep', intensive:'ielts_prep', elite:'ielts_prep', whv:'ielts_prep',
+    semiprivate:'ielts_prep', wns:'ielts_prep', grammar:'ielts_prep', bundle:'ielts_prep',
+    scholarship:'scholarship_prep', scholarship_nc1:'scholarship_prep', scholarship_nc5:'scholarship_prep', scholarship_nc10:'scholarship_prep',
+    general_english:'general_english', conversation_english:'general_english', business_english:'general_english',
+    idp_test:'idp_package', idp_prep5:'idp_package', idp_prep10:'idp_package'
+  };
+  return arr.map(c => c.category ? c : { ...c, category: keyToCat[c.key] || 'ielts_prep' });
+}
+let classes = migrateClasses(load('tutory_classes', DEFAULT_CLASSES));
 let registrations  = load('tutory_registrations', []);
 let memberCodes    = load('tutory_member_codes', MEMBER_CODES_DEFAULT);
 let usedCodes      = load('tutory_used_codes', []);
@@ -1031,7 +1042,7 @@ async function loadClassesFromSupabase() {
     if (error || !data) return;
     const remote = data.value;
     if (Array.isArray(remote) && remote.length > 0) {
-      classes = remote;
+      classes = migrateClasses(remote);
       save('tutory_classes', classes); // cache locally
     }
   } catch(e) { console.warn('Could not load classes from Supabase:', e); }
