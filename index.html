@@ -800,6 +800,7 @@ const DEFAULT_CLASSES = [
   { key: 'bundle',            name: 'Bundle Writing + Speaking + Grammar (July Periode II)', hours: '25 Hours',                  normalPrice: 1298000,  price: 669000,  type: 'group',         category: 'ielts_prep',       memberPrice: 649000, active: true },
   // ── Scholarship Preparation ───────────────────────────────────────────────
   { key: 'scholarship',       name: '🎓 IELTS + Scholarship Prep (Chevening)',    hours: '20 Jam IELTS + 4 Jam Scholarship',     normalPrice: 4299000,  price: 3599000, type: 'scholarship',   category: 'scholarship_prep', memberPrice: null,   active: true },
+  { key: 'chevening_group',   name: 'IELTS + Chevening Preparation Essay (Group)', hours: '10 Jam IELTS + 4 Sesi Essay Prep',   normalPrice: 849000,   price: 849000,  type: 'scholarship',   category: 'scholarship_prep', memberPrice: 799000, active: true },
   { key: 'scholarship_nc1',   name: 'IELTS + Scholarship Prep (1 Sesi)',          hours: '15 Jam IELTS + 1 Meeting Scholarship', normalPrice: 2699000,  price: 2699000, type: 'scholarship_nc', category: 'scholarship_prep', memberPrice: null,   active: true },
   { key: 'scholarship_nc5',   name: 'IELTS + Scholarship Prep (5 Sesi)',          hours: '15 Jam IELTS + 5 Meeting Scholarship', normalPrice: 3380000,  price: 3380000, type: 'scholarship_nc', category: 'scholarship_prep', memberPrice: null,   active: true },
   { key: 'scholarship_nc10',  name: 'IELTS + Scholarship Prep (10 Sesi)',         hours: 'IELTS + 10 Meeting Scholarship',       normalPrice: 4150000,  price: 4150000, type: 'scholarship_nc', category: 'scholarship_prep', memberPrice: null,   active: true },
@@ -920,6 +921,16 @@ const CLASS_BENEFITS = {
       'Bisa dibantu daftar langsung untuk tes IELTS (gratis)'
     ]
   },
+  chevening_group: {
+    desc: 'Kelas group untuk persiapan beasiswa Chevening — cocok buat kamu yang ingin belajar bareng dan lebih hemat.',
+    items: [
+      '10 jam kelas IELTS (group, Batch Agustus)',
+      '4 sesi Chevening essay preparation (group coaching)',
+      '1x konsultasi IDP & dokumen aplikasi beasiswa',
+      'Belajar bareng sesama applicant Chevening',
+      'Member price: IDR 799.000'
+    ]
+  },
   scholarship_nc1: {
     desc: 'Paket IELTS + Scholarship untuk persiapan beasiswa Non-Chevening dengan 1 sesi konsultasi essay.',
     items: [
@@ -1021,7 +1032,7 @@ function migrateClasses(arr) {
   const keyToCat = {
     express:'ielts_prep', basic:'ielts_prep', intensive:'ielts_prep', elite:'ielts_prep', whv:'ielts_prep',
     semiprivate:'ielts_prep', wns:'ielts_prep', grammar:'ielts_prep', bundle:'ielts_prep',
-    scholarship:'scholarship_prep', scholarship_nc1:'scholarship_prep', scholarship_nc5:'scholarship_prep', scholarship_nc10:'scholarship_prep',
+    scholarship:'scholarship_prep', chevening_group:'scholarship_prep', scholarship_nc1:'scholarship_prep', scholarship_nc5:'scholarship_prep', scholarship_nc10:'scholarship_prep',
     general_english:'general_english', conversation_english:'general_english', business_english:'general_english',
     idp_test:'idp_package', idp_prep5:'idp_package', idp_prep10:'idp_package'
   };
