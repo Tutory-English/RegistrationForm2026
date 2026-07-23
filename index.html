@@ -422,6 +422,11 @@
               <div class="cat-name">Prep + Official Test</div>
               <div class="cat-sub">With IDP IELTS</div>
             </div>
+            <div class="cat-card" onclick="selectCategory('essay_interview')">
+              <div class="cat-icon">✍️</div>
+              <div class="cat-name">Essay & Interview Prep</div>
+              <div class="cat-sub">Scholarship Mentoring</div>
+            </div>
           </div>
         </div>
 
@@ -457,6 +462,12 @@
           <div id="section-idp" style="display:none;">
             <div style="font-weight:700;font-size:.9rem;margin-bottom:10px;color:#374151;">📋 Preparation Class + Official Test Package <span style="font-size:.75rem;font-weight:400;color:var(--gray)">(in collaboration with IDP IELTS)</span></div>
             <div class="class-grid" id="class-grid-idp"></div>
+          </div>
+
+          <!-- Essay & Interview Prep -->
+          <div id="section-essay" style="display:none;">
+            <p style="font-size:.83rem;color:var(--gray);margin-bottom:14px;">Personalized one-on-one mentoring to strengthen your scholarship application — essay feedback, personal statement review, and mock interview practice.</p>
+            <div class="class-grid" id="class-grid-essay"></div>
           </div>
         </div>
 
@@ -808,6 +819,10 @@ const DEFAULT_CLASSES = [
   { key: 'general_english',      name: 'General English',       hours: '20 Hours', normalPrice: 5750000, price: 2299000, type: 'private', category: 'general_english', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
   { key: 'conversation_english', name: 'Conversation English',  hours: '15 Hours', normalPrice: 4750000, price: 1899000, type: 'private', category: 'general_english', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
   { key: 'business_english',     name: 'Business English',      hours: '15 Hours', normalPrice: 4750000, price: 1899000, type: 'private', category: 'general_english', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
+  // ── Essay Checking & Interview Preparation ────────────────────────────────
+  { key: 'essay_single',    name: 'Single Session',    hours: '1 Hour',  normalPrice: 200000,  price: 200000,  type: 'private', category: 'essay_interview', memberPrice: null, active: true },
+  { key: 'essay_standard',  name: 'Standard Package',  hours: '5 Hours', normalPrice: 985000,  price: 985000,  type: 'private', category: 'essay_interview', memberPrice: null, active: true },
+  { key: 'essay_intensive', name: 'Intensive Package', hours: '10 Hours',normalPrice: 1800000, price: 1800000, type: 'private', category: 'essay_interview', memberPrice: null, active: true },
   // ── IDP Package ───────────────────────────────────────────────────────────
   { key: 'idp_test',   name: 'IELTS by IDP',                          hours: 'Official Test',                 normalPrice: 3490000, price: 3490000, type: 'idp', category: 'idp_package', memberPrice: null, active: true },
   { key: 'idp_prep5',  name: 'Preparation Class (5h) + IELTS by IDP', hours: '5 Hours prep + Official Test',  normalPrice: 4190000, price: 4190000, type: 'idp', category: 'idp_package', memberPrice: null, active: true },
@@ -958,6 +973,33 @@ const CLASS_BENEFITS = {
       'Jadwal IELTS fleksibel sesuai kebutuhan kamu'
     ]
   },
+  essay_single: {
+    desc: '1 sesi private mentoring (1 jam) — pilih antara Essay Review atau Mock Interview.',
+    items: [
+      'Essay review atau mock interview (pilih salah satu)',
+      'Personalized feedback dari mentor berpengalaman',
+      'Cocok untuk review cepat sebelum deadline'
+    ]
+  },
+  essay_standard: {
+    desc: '5 jam private mentoring — fleksibel untuk essay checking & interview preparation.',
+    items: [
+      '5 jam total sesi (bisa dibagi sesuai kebutuhan)',
+      'Essay review, personal statement feedback, mock interview',
+      'Flexible scheduling — jadwal sesuai keinginan kamu',
+      'Personalized guidance untuk strengthening aplikasi beasiswa'
+    ]
+  },
+  essay_intensive: {
+    desc: '10 jam private mentoring intensif — comprehensive essay guidance & interview coaching.',
+    items: [
+      '10 jam total sesi — paling komprehensif',
+      'Full essay guidance dari draft hingga final',
+      'Mock interview intensif dengan feedback mendetail',
+      'Personal statement & motivation letter review',
+      'Flexible scheduling — jadwal sesuai keinginan kamu'
+    ]
+  },
   general_english: {
     desc: 'For improving general English skills — not for IELTS test preparation.',
     items: [
@@ -1033,6 +1075,7 @@ function migrateClasses(arr) {
     express:'ielts_prep', basic:'ielts_prep', intensive:'ielts_prep', elite:'ielts_prep', whv:'ielts_prep',
     semiprivate:'ielts_prep', wns:'ielts_prep', grammar:'ielts_prep', bundle:'ielts_prep',
     scholarship:'scholarship_prep', chevening_group:'scholarship_prep', scholarship_nc1:'scholarship_prep', scholarship_nc5:'scholarship_prep', scholarship_nc10:'scholarship_prep',
+    essay_single:'essay_interview', essay_standard:'essay_interview', essay_intensive:'essay_interview',
     general_english:'general_english', conversation_english:'general_english', business_english:'general_english',
     idp_test:'idp_package', idp_prep5:'idp_package', idp_prep10:'idp_package'
   };
@@ -1092,14 +1135,15 @@ function selectCategory(cat) {
   selectedCategory = cat;
   document.getElementById('category-picker').style.display = 'none';
   document.getElementById('class-picker').style.display = 'block';
-  ['section-ielts','section-scholarship','section-general','section-idp'].forEach(id => {
+  ['section-ielts','section-scholarship','section-general','section-idp','section-essay'].forEach(id => {
     document.getElementById(id).style.display = 'none';
   });
   const catSectionMap = {
     ielts_prep:       'section-ielts',
     scholarship_prep: 'section-scholarship',
     general_english:  'section-general',
-    idp_package:      'section-idp'
+    idp_package:      'section-idp',
+    essay_interview:  'section-essay'
   };
   if (catSectionMap[cat]) document.getElementById(catSectionMap[cat]).style.display = 'block';
   document.getElementById('band-guarantee-banner').style.display = (cat === 'ielts_prep') ? 'block' : 'none';
@@ -1107,7 +1151,8 @@ function selectCategory(cat) {
     ielts_prep:       '📚 IELTS Preparation: Private & Group Class',
     scholarship_prep: '🎓 IELTS + Scholarship Preparation',
     general_english:  '🗣️ General English Private Class',
-    idp_package:      '📋 IELTS Prep + Official Test Package (IDP)'
+    idp_package:      '📋 IELTS Prep + Official Test Package (IDP)',
+    essay_interview:  '✍️ Essay Checking & Interview Preparation'
   };
   document.getElementById('selected-cat-label').textContent = catLabels[cat] || '';
   document.getElementById('f-class-err').style.display = 'none';
@@ -1134,6 +1179,7 @@ function renderClassCards() {
     { gridId: 'class-grid-scholarship-nc',        filter: c => c.type === 'scholarship_nc' },
     { gridId: 'class-grid-general',               filter: c => c.category === 'general_english' },
     { gridId: 'class-grid-idp',                   filter: c => c.type === 'idp' },
+    { gridId: 'class-grid-essay',                 filter: c => c.category === 'essay_interview' },
   ];
   sections.forEach(({ gridId, filter }) => {
     const grid = document.getElementById(gridId);
