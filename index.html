@@ -1107,8 +1107,20 @@ async function loadClassesFromSupabase() {
     if (error || !data) return;
     const remote = data.value;
     if (Array.isArray(remote) && remote.length > 0) {
-      classes = migrateClasses(remote);
-      save('tutory_classes', classes); // cache locally
+      // Merge strategy: DEFAULT_CLASSES is the source of truth for structure.
+      // Supabase overrides name/price/active for existing keys (admin edits).
+      // New classes added in code but not yet in Supabase still appear (from DEFAULT_CLASSES).
+      const remoteMap = {};
+      migrateClasses(remote).forEach(c => { remoteMap[c.key] = c; });
+      classes = DEFAULT_CLASSES.map(def => remoteMap[def.key]
+        ? { ...def, ...remoteMap[def.key], category: def.category, type: def.type }
+        : def
+      );
+      // Also keep any Supabase-only keys (added via admin panel, not in DEFAULT_CLASSES)
+      migrateClasses(remote).forEach(c => {
+        if (!classes.find(x => x.key === c.key)) classes.push(c);
+      });
+      save('tutory_classes', classes);
     }
   } catch(e) { console.warn('Could not load classes from Supabase:', e); }
 }
