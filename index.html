@@ -810,15 +810,15 @@ const MEMBER_CODES_DEFAULT = [
 
 const DEFAULT_CLASSES = [
   // ── IELTS Preparation ─────────────────────────────────────────────────────
-  { key: 'express',           name: 'Express Coaching',                           hours: '5 Hours',                              normalPrice: 1996000,  price: 1099000, type: 'private',       category: 'ielts_prep',       memberPrice: null,   active: true },
-  { key: 'basic',             name: '⭐ Basic Coaching',                           hours: '10 Hours',                             normalPrice: 3899000,  price: 1899000, type: 'private',       category: 'ielts_prep',       memberPrice: null,   active: true },
-  { key: 'intensive',         name: '⭐ Intensive Coaching',                       hours: '20 Hours',                             normalPrice: 7999000,  price: 3199000, type: 'private',       category: 'ielts_prep',       memberPrice: null,   active: true },
-  { key: 'elite',             name: '⭐ ELITE Coaching',                           hours: '40 Hours',                             normalPrice: 11699000, price: 5899000, type: 'private',       category: 'ielts_prep',       memberPrice: null,   active: true },
-  { key: 'whv',               name: 'WHV Coaching',                               hours: '12 Hours',                             normalPrice: 2899000,  price: 1699000, type: 'private',       category: 'ielts_prep',       memberPrice: null,   active: true },
-  { key: 'semiprivate',       name: '⭐ Semi Private',                             hours: '20 Hours',                             normalPrice: 1129000,  price: 935000,  type: 'semiprivate',   category: 'ielts_prep',       memberPrice: 879000, active: true },
-  { key: 'wns',               name: 'Writing & Speaking Class (Agustus Periode II)', hours: '15 Hours',                             normalPrice: 799000,   price: 459000,  type: 'group',         category: 'ielts_prep',       memberPrice: 439000, active: true },
-  { key: 'grammar',           name: 'Grammar Group Class (Agustus Periode II)',       hours: '10 Hours',                             normalPrice: 499000,   price: 249000,  type: 'group',         category: 'ielts_prep',       memberPrice: 229000, active: true },
-  { key: 'bundle',            name: 'Bundle Writing + Speaking + Grammar (Agustus Periode II)', hours: '25 Hours',                  normalPrice: 1298000,  price: 679000,  type: 'group',         category: 'ielts_prep',       memberPrice: 649000, active: true },
+  { key: 'express',           name: 'Express Coaching',                                        hours: '5 Hours',  normalPrice: 1996000,  price: 928155,  type: 'private',     category: 'ielts_prep', memberPrice: null,   promoTag: '🇮🇩 Promo 17-an', active: true },
+  { key: 'basic',             name: '⭐ Basic Coaching',                                        hours: '10 Hours', normalPrice: 3899000,  price: 1728155, type: 'private',     category: 'ielts_prep', memberPrice: null,   promoTag: '🇮🇩 Promo 17-an', active: true },
+  { key: 'intensive',         name: '⭐ Intensive Coaching',                                    hours: '20 Hours', normalPrice: 7999000,  price: 3028155, type: 'private',     category: 'ielts_prep', memberPrice: null,   promoTag: '🇮🇩 Promo 17-an', active: true },
+  { key: 'elite',             name: '⭐ ELITE Coaching',                                        hours: '40 Hours', normalPrice: 11699000, price: 5728155, type: 'private',     category: 'ielts_prep', memberPrice: null,   promoTag: '🇮🇩 Promo 17-an', active: true },
+  { key: 'whv',               name: 'WHV Coaching',                                            hours: '12 Hours', normalPrice: 2899000,  price: 1528155, type: 'private',     category: 'ielts_prep', memberPrice: null,   promoTag: '🇮🇩 Promo 17-an', active: true },
+  { key: 'semiprivate',       name: '⭐ Semi Private',                                          hours: '20 Hours', normalPrice: 1799000,  price: 818000,  type: 'semiprivate', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', active: true },
+  { key: 'wns',               name: 'Writing & Speaking Class (Agustus Periode II)',            hours: '15 Hours', normalPrice: 489000,   price: 441000,  type: 'group',       category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', active: true },
+  { key: 'grammar',           name: 'Grammar Group Class (Agustus Periode II)',                 hours: '10 Hours', normalPrice: 279000,   price: 232000,  type: 'group',       category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', active: true },
+  { key: 'bundle',            name: 'Bundle Writing + Speaking + Grammar (Agustus Periode II)', hours: '25 Hours', normalPrice: 749000,   price: 624000,  type: 'group',       category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', active: true },
   // ── Scholarship Preparation ───────────────────────────────────────────────
   { key: 'scholarship',       name: '🎓 IELTS + Scholarship Prep (Chevening)',    hours: '20 Jam IELTS + 4 Jam Scholarship',     normalPrice: 4299000,  price: 3599000, type: 'scholarship',   category: 'scholarship_prep', memberPrice: null,   active: true },
   { key: 'chevening_group',   name: 'IELTS + Chevening Preparation Essay (Group)', hours: '10 Jam IELTS + 4 Sesi Essay Prep',   normalPrice: 849000,   price: 849000,  type: 'scholarship',   category: 'scholarship_prep', memberPrice: 799000, active: true },
@@ -1242,7 +1242,7 @@ function renderClassCards() {
         <label class="class-card" id="cc-${c.key}">
           <input type="radio" name="classChoice" value="${c.key}" onchange="selectClass(this)">
           <div class="check-icon">✓</div>
-          <div class="class-name">${c.name} <span class="badge badge-type">${typeLabel}</span>${promoPct > 0 ? ` <span class="badge" style="background:#fee2e2;color:#dc2626;">Promo ${promoPct}%</span>` : ''}</div>
+          <div class="class-name">${c.name} <span class="badge badge-type">${typeLabel}</span>${c.promoTag ? ` <span class="badge" style="background:#fef3c7;color:#92400e;border:1px solid #f59e0b;">${c.promoTag}</span>` : (promoPct > 0 ? ` <span class="badge" style="background:#fee2e2;color:#dc2626;">Promo ${promoPct}%</span>` : '')}</div>
           <div class="class-meta">${c.hours}${metaExtra}</div>
           <div class="class-price">
             ${promoPct > 0 ? `<div class="price-normal">IDR ${fmt(c.normalPrice)}</div>` : ''}
