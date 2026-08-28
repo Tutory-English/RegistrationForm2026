@@ -809,34 +809,35 @@ const MEMBER_CODES_DEFAULT = [
 ];
 
 const DEFAULT_CLASSES = [
-  // ── IELTS Preparation ─────────────────────────────────────────────────────
-  { key: 'express',           name: 'Express Coaching',                                        hours: '5 Hours',  normalPrice: 1996000,  price: 928155,  type: 'private',     category: 'ielts_prep', memberPrice: null,   promoTag: '🇮🇩 Promo 17-an', active: true },
-  { key: 'basic',             name: '⭐ Basic Coaching',                                        hours: '10 Hours', normalPrice: 3899000,  price: 1728155, type: 'private',     category: 'ielts_prep', memberPrice: null,   promoTag: '🇮🇩 Promo 17-an', active: true },
-  { key: 'intensive',         name: '⭐ Intensive Coaching',                                    hours: '20 Hours', normalPrice: 7999000,  price: 3028155, type: 'private',     category: 'ielts_prep', memberPrice: null,   promoTag: '🇮🇩 Promo 17-an', active: true },
-  { key: 'elite',             name: '⭐ ELITE Coaching',                                        hours: '40 Hours', normalPrice: 11699000, price: 5728155, type: 'private',     category: 'ielts_prep', memberPrice: null,   promoTag: '🇮🇩 Promo 17-an', active: true },
-  { key: 'whv',               name: 'WHV Coaching',                                            hours: '12 Hours', normalPrice: 2899000,  price: 1528155, type: 'private',     category: 'ielts_prep', memberPrice: null,   promoTag: '🇮🇩 Promo 17-an', active: true },
-  { key: 'semiprivate',       name: '⭐ Semi Private',                                          hours: '20 Hours', normalPrice: 1799000,  price: 818000,  type: 'semiprivate', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', active: true },
-  { key: 'wns',               name: 'Writing & Speaking Class (Agustus Periode II)',            hours: '15 Hours', normalPrice: 489000,   price: 441000,  type: 'group',       category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', active: true },
-  { key: 'grammar',           name: 'Grammar Group Class (Agustus Periode II)',                 hours: '10 Hours', normalPrice: 279000,   price: 232000,  type: 'group',       category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', active: true },
-  { key: 'bundle',            name: 'Bundle Writing + Speaking + Grammar (Agustus Periode II)', hours: '25 Hours', normalPrice: 749000,   price: 624000,  type: 'group',       category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', active: true },
+  // ── IELTS Preparation – Private ───────────────────────────────────────────
+  { key: 'express',           name: 'Express Coaching',                   hours: '5 Hours',  normalPrice: 1552600,  price: 1109000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
+  { key: 'basic',             name: '⭐ Basic Coaching',                   hours: '10 Hours', normalPrice: 2658600,  price: 1899000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
+  { key: 'intensive',         name: '⭐ Intensive Coaching',               hours: '20 Hours', normalPrice: 4618600,  price: 3299000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
+  { key: 'elite',             name: '⭐ ELITE Coaching',                   hours: '40 Hours', normalPrice: 8258600,  price: 5899000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
+  { key: 'whv',               name: 'IELTS General Training Coaching',    hours: '12 Hours', normalPrice: 2899000,  price: 1528155, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
+  // ── IELTS Preparation – Group ─────────────────────────────────────────────
+  { key: 'semiprivate',       name: '⭐ Semi Private',                     hours: '20 Hours', normalPrice: 1309000,  price: 935000,  type: 'semiprivate', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', active: true },
+  { key: 'grammar_weekday',   name: 'IELTS All Skills — Beginner Class', hours: '10 Hours', normalPrice: 679600, price: 479000, type: 'group', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', scheduleOptions: ['Weekdays', 'Weekend'], active: true },
+  { key: 'wns',               name: 'Writing & Speaking Class',  hours: '15 Hours', normalPrice: 679600, price: 479000, type: 'group', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', note: 'Kelas belum tersedia', active: true },
+  { key: 'bundle',            name: 'Bundle: W&S + Grammar',     hours: '25 Hours', normalPrice: 908600, price: 649000, type: 'group', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', note: 'Kelas belum tersedia', active: true },
   // ── Scholarship Preparation ───────────────────────────────────────────────
-  { key: 'scholarship',       name: '🎓 IELTS + Scholarship Prep (Chevening)',    hours: '20 Jam IELTS + 4 Jam Scholarship',     normalPrice: 4299000,  price: 3599000, type: 'scholarship',   category: 'scholarship_prep', memberPrice: null,   active: true },
-  { key: 'chevening_group',   name: 'IELTS + Chevening Preparation Essay (Group)', hours: '10 Jam IELTS + 4 Sesi Essay Prep',   normalPrice: 849000,   price: 849000,  type: 'scholarship',   category: 'scholarship_prep', memberPrice: 799000, active: true },
-  { key: 'scholarship_nc1',   name: 'IELTS + Scholarship Prep (1 Sesi)',          hours: '15 Jam IELTS + 1 Meeting Scholarship', normalPrice: 2699000,  price: 2699000, type: 'scholarship_nc', category: 'scholarship_prep', memberPrice: null,   active: true },
-  { key: 'scholarship_nc5',   name: 'IELTS + Scholarship Prep (5 Sesi)',          hours: '15 Jam IELTS + 5 Meeting Scholarship', normalPrice: 3380000,  price: 3380000, type: 'scholarship_nc', category: 'scholarship_prep', memberPrice: null,   active: true },
-  { key: 'scholarship_nc10',  name: 'IELTS + Scholarship Prep (10 Sesi)',         hours: 'IELTS + 10 Meeting Scholarship',       normalPrice: 4150000,  price: 4150000, type: 'scholarship_nc', category: 'scholarship_prep', memberPrice: null,   active: true },
+  { key: 'scholarship',       name: '🎓 Scholarship Preparation 2027',    hours: '30 Jam IELTS + 10 Jam Scholarship', normalPrice: 6499000, price: 6499000, type: 'scholarship',    category: 'scholarship_prep', memberPrice: null, active: true },
+  { key: 'chevening_group',   name: 'IELTS + Chevening Prep Essay (Group)', hours: '10 Jam IELTS + 4 Sesi Essay Prep', normalPrice: 849000, price: 849000,  type: 'scholarship',    category: 'scholarship_prep', memberPrice: null, active: false },
+  { key: 'scholarship_nc1',   name: 'IELTS + Scholarship Prep (1 Sesi)', hours: '15 Jam IELTS + 1 Meeting Scholarship', normalPrice: 2699000, price: 2699000, type: 'scholarship_nc', category: 'scholarship_prep', memberPrice: null, active: true },
+  { key: 'scholarship_nc5',   name: 'IELTS + Scholarship Prep (5 Sesi)', hours: '15 Jam IELTS + 5 Meeting Scholarship', normalPrice: 3380000, price: 3380000, type: 'scholarship_nc', category: 'scholarship_prep', memberPrice: null, active: true },
+  { key: 'scholarship_nc10',  name: 'IELTS + Scholarship Prep (10 Sesi)',hours: 'IELTS + 10 Meeting Scholarship',        normalPrice: 4150000, price: 4150000, type: 'scholarship_nc', category: 'scholarship_prep', memberPrice: null, active: true },
   // ── General English ───────────────────────────────────────────────────────
-  { key: 'general_english',      name: 'General English',       hours: '20 Hours', normalPrice: 5750000, price: 2299000, type: 'private', category: 'general_english', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
-  { key: 'conversation_english', name: 'Conversation English',  hours: '15 Hours', normalPrice: 4750000, price: 1899000, type: 'private', category: 'general_english', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
-  { key: 'business_english',     name: 'Business English',      hours: '15 Hours', normalPrice: 4750000, price: 1899000, type: 'private', category: 'general_english', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
+  { key: 'general_english',      name: 'General English',      hours: '20 Hours', normalPrice: 5750000, price: 3299000, type: 'private', category: 'general_english', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
+  { key: 'conversation_english', name: 'Conversation English', hours: '15 Hours', normalPrice: 4750000, price: 1899000, type: 'private', category: 'general_english', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
+  { key: 'business_english',     name: 'Business English',     hours: '15 Hours', normalPrice: 4750000, price: 1899000, type: 'private', category: 'general_english', memberPrice: null, capacity: 'For 1–2 Persons', active: true },
   // ── Essay Checking & Interview Preparation ────────────────────────────────
-  { key: 'essay_single',    name: 'Single Session',    hours: '1 Hour',  normalPrice: 200000,  price: 200000,  type: 'private', category: 'essay_interview', memberPrice: null, active: true },
-  { key: 'essay_standard',  name: 'Standard Package',  hours: '5 Hours', normalPrice: 985000,  price: 985000,  type: 'private', category: 'essay_interview', memberPrice: null, active: true },
-  { key: 'essay_intensive', name: 'Intensive Package', hours: '10 Hours',normalPrice: 1800000, price: 1800000, type: 'private', category: 'essay_interview', memberPrice: null, active: true },
+  { key: 'essay_single',    name: 'Single Session',    hours: '1 Hour',   normalPrice: 200000,  price: 200000,  type: 'private', category: 'essay_interview', memberPrice: null, active: true },
+  { key: 'essay_standard',  name: 'Standard Package',  hours: '5 Hours',  normalPrice: 985000,  price: 985000,  type: 'private', category: 'essay_interview', memberPrice: null, active: true },
+  { key: 'essay_intensive', name: 'Intensive Package', hours: '10 Hours', normalPrice: 1800000, price: 1800000, type: 'private', category: 'essay_interview', memberPrice: null, active: true },
   // ── IDP Package ───────────────────────────────────────────────────────────
-  { key: 'idp_test',   name: 'IELTS by IDP',                          hours: 'Official Test',                 normalPrice: 3490000, price: 3490000, type: 'idp', category: 'idp_package', memberPrice: null, active: true },
-  { key: 'idp_prep5',  name: 'Preparation Class (5h) + IELTS by IDP', hours: '5 Hours prep + Official Test',  normalPrice: 4190000, price: 4190000, type: 'idp', category: 'idp_package', memberPrice: null, active: true },
-  { key: 'idp_prep10', name: 'Preparation Class (10h) + IELTS by IDP',hours: '10 Hours prep + Official Test', normalPrice: 6990000, price: 6990000, type: 'idp', category: 'idp_package', memberPrice: null, active: true },
+  { key: 'idp_test',   name: 'IELTS by IDP',                           hours: 'Official Test',                 normalPrice: 3490000, price: 3490000, type: 'idp', category: 'idp_package', memberPrice: null, active: true },
+  { key: 'idp_prep5',  name: 'Prep Class (5h) + IELTS by IDP',        hours: '5 Hours prep + Official Test',  normalPrice: 4190000, price: 4190000, type: 'idp', category: 'idp_package', memberPrice: null, active: true },
+  { key: 'idp_prep10', name: 'Prep Class (10h) + IELTS by IDP',       hours: '10 Hours prep + Official Test', normalPrice: 6990000, price: 6990000, type: 'idp', category: 'idp_package', memberPrice: null, active: true },
 ];
 
 // Special promo codes (fixed-amount discount for private classes)
@@ -1073,6 +1074,30 @@ const CLASS_BENEFITS = {
       'Document Preparation — assistance organizing academic records, personal statements, and other materials',
       'IELTS Test Registration and Preparation — official IDP test registration + 10 hours structured preparation'
     ]
+  },
+  grammar: {
+    items: [
+      '1 pre test + 1 final test with improvement evaluation',
+      'Free detailed progress report',
+      'More personalized learning material and feedback',
+      'Free recording and material'
+    ]
+  },
+  grammar_weekday: {
+    items: [
+      '1 pre test + 1 final test with improvement evaluation',
+      'Free detailed progress report',
+      'More personalized learning material and feedback',
+      'Free recording and material'
+    ]
+  },
+  grammar_weekend: {
+    items: [
+      '1 pre test + 1 final test with improvement evaluation',
+      'Free detailed progress report',
+      'More personalized learning material and feedback',
+      'Free recording and material'
+    ]
   }
 };
 
@@ -1090,7 +1115,7 @@ function migrateClasses(arr) {
   // Backward-compat: add/fix category AND type if missing (old cached/Supabase data)
   const keyToCat = {
     express:'ielts_prep', basic:'ielts_prep', intensive:'ielts_prep', elite:'ielts_prep', whv:'ielts_prep',
-    semiprivate:'ielts_prep', wns:'ielts_prep', grammar:'ielts_prep', bundle:'ielts_prep',
+    semiprivate:'ielts_prep', wns:'ielts_prep', grammar:'ielts_prep', grammar_weekday:'ielts_prep', grammar_weekend:'ielts_prep', bundle:'ielts_prep',
     scholarship:'scholarship_prep', chevening_group:'scholarship_prep', scholarship_nc1:'scholarship_prep', scholarship_nc5:'scholarship_prep', scholarship_nc10:'scholarship_prep',
     essay_single:'essay_interview', essay_standard:'essay_interview', essay_intensive:'essay_interview',
     general_english:'general_english', conversation_english:'general_english', business_english:'general_english',
@@ -1098,7 +1123,7 @@ function migrateClasses(arr) {
   };
   const keyToType = {
     semiprivate:'semiprivate',
-    wns:'group', grammar:'group', bundle:'group',
+    wns:'group', grammar:'group', grammar_weekday:'group', grammar_weekend:'group', bundle:'group',
     scholarship:'scholarship', chevening_group:'scholarship',
     scholarship_nc1:'scholarship_nc', scholarship_nc5:'scholarship_nc', scholarship_nc10:'scholarship_nc',
     idp_test:'idp', idp_prep5:'idp', idp_prep10:'idp'
@@ -1155,6 +1180,7 @@ async function saveClassesToSupabase() {
 let currentStep = 1;
 let selectedClass = null;
 let selectedCategory = null;
+let selectedSchedule  = null;
 let memberCodeApplied = false;
 let promoCodeApplied  = false;
 let promoDiscount     = 0;
@@ -1243,12 +1269,20 @@ function renderClassCards() {
           <input type="radio" name="classChoice" value="${c.key}" onchange="selectClass(this)">
           <div class="check-icon">✓</div>
           <div class="class-name">${c.name} <span class="badge badge-type">${typeLabel}</span>${c.promoTag ? ` <span class="badge" style="background:#fef3c7;color:#92400e;border:1px solid #f59e0b;">${c.promoTag}</span>` : (promoPct > 0 ? ` <span class="badge" style="background:#fee2e2;color:#dc2626;">Promo ${promoPct}%</span>` : '')}</div>
+          ${c.note ? `<div style="display:inline-block;margin-top:4px;font-size:.75rem;font-weight:600;color:#b45309;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:2px 8px;">⚠️ ${c.note}</div>` : ''}
           <div class="class-meta">${c.hours}${metaExtra}</div>
           <div class="class-price">
             ${promoPct > 0 ? `<div class="price-normal">IDR ${fmt(c.normalPrice)}</div>` : ''}
             <div class="price-promo">IDR ${fmt(c.price)}${c.memberPrice ? ' <span style="font-size:.75rem;color:var(--gray)">(non-member)</span>' : ''}</div>
             ${c.memberPrice ? `<div style="font-size:.8rem;color:var(--green);margin-top:2px;">IDR ${fmt(c.memberPrice)} with member code</div>` : ''}
           </div>
+          ${c.scheduleOptions ? `
+          <div class="schedule-picker" id="schedule-${c.key}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+            <div style="font-size:.82rem;font-weight:600;margin-bottom:8px;">📅 Pilih jadwal kelas:</div>
+            <div style="display:flex;gap:10px;">
+              ${c.scheduleOptions.map(s => `<label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer;background:var(--blue-light);border:1px solid var(--blue);border-radius:8px;padding:6px 14px;"><input type="radio" name="sched_${c.key}" value="${s}" onchange="selectSchedule('${s}')"> ${s}</label>`).join('')}
+            </div>
+          </div>` : ''}
           ${benefit ? `
           <div class="benefit-panel" id="benefit-panel-${c.key}" style="display:none;">
             <div class="benefit-title">✨ What you'll get:</div>
@@ -1306,7 +1340,17 @@ function validateStep(step) {
     ok = req('current-band','f-current-band') && ok;
     ok = req('weak-skill','f-weak-skill') && ok;
     if (!selectedClass) { document.getElementById('f-class-err').style.display='block'; ok = false; }
-    else document.getElementById('f-class-err').style.display='none';
+    else {
+      document.getElementById('f-class-err').style.display='none';
+      const selInfoChk = classes.find(c => c.key === selectedClass);
+      if (selInfoChk && selInfoChk.scheduleOptions && !selectedSchedule) {
+        document.getElementById('f-class-err').textContent = 'Pilih jadwal kelas (Weekdays / Weekend) untuk melanjutkan';
+        document.getElementById('f-class-err').style.display = 'block';
+        ok = false;
+      } else {
+        document.getElementById('f-class-err').textContent = 'Please select a class to continue';
+      }
+    }
 
     const selInfo = classes.find(c => c.key === selectedClass);
     if (selInfo && selInfo.type === 'idp') {
@@ -1349,11 +1393,21 @@ function toggleOtherPurpose() {
 // ============================================================
 // CLASS SELECTION
 // ============================================================
+function selectSchedule(schedule) {
+  selectedSchedule = schedule;
+}
+
 function selectClass(radio) {
   document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
   radio.closest('.class-card').classList.add('selected');
   selectedClass = radio.value;
+  selectedSchedule = null;
   document.getElementById('f-class-err').style.display = 'none';
+
+  // Show/hide schedule picker
+  document.querySelectorAll('.schedule-picker').forEach(p => p.style.display = 'none');
+  const picker = document.getElementById('schedule-' + radio.value);
+  if (picker) picker.style.display = 'block';
 
   // Auto show benefit panel of the selected class only, hide all others
   document.querySelectorAll('.benefit-panel').forEach(p => p.style.display = 'none');
@@ -1373,7 +1427,7 @@ function buildPaymentPage() {
   const info = classes.find(c => c.key === selectedClass);
   const name = document.getElementById('fullname').value;
   document.getElementById('ps-name').textContent = name;
-  document.getElementById('ps-class').textContent = info.name + ' · ' + info.hours;
+  document.getElementById('ps-class').textContent = info.name + (selectedSchedule ? ` (${selectedSchedule})` : '') + ' · ' + info.hours;
   currentPrice = info.price;
   memberCodeApplied = false;
   promoCodeApplied  = false;
@@ -1534,7 +1588,8 @@ async function submitForm() {
     currentBand: document.getElementById('current-band').value,
     weakSkill: document.getElementById('weak-skill').value,
     classKey: selectedClass,
-    className: info.name,
+    className: info.name + (selectedSchedule ? ` (${selectedSchedule})` : ''),
+    classSchedule: selectedSchedule || '',
     classHours: info.hours,
     amountPaid: currentPrice,
     memberCode: appliedCode || '',
