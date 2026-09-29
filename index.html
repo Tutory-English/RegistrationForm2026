@@ -561,6 +561,28 @@
           <div class="field-error" id="f-payment-method-err" style="display:none;margin-top:8px;">Pilih metode pembayaran terlebih dahulu</div>
         </div>
 
+        <!-- PAYMENT PLAN SELECTOR -->
+        <div style="margin-bottom:20px;">
+          <div style="font-weight:700;font-size:.9rem;margin-bottom:10px;">💵 Pilih Rencana Pembayaran <span class="req">*</span></div>
+          <div style="display:flex;gap:10px;">
+            <button type="button" onclick="selectPaymentPlan('lunas')" id="btn-plan-lunas" class="pay-method-btn">✅ Lunas</button>
+            <button type="button" onclick="selectPaymentPlan('cicilan')" id="btn-plan-cicilan" class="pay-method-btn">📅 Cicilan</button>
+          </div>
+          <div class="field-error" id="f-payment-plan-err" style="display:none;margin-top:8px;">Pilih rencana pembayaran terlebih dahulu</div>
+          <div id="cicilan-breakdown" style="display:none;margin-top:12px;background:#f0f9f0;border:1px solid #b2dfb2;border-radius:10px;padding:14px;">
+            <div style="font-weight:700;font-size:.85rem;color:#2e7d32;margin-bottom:8px;">📅 Rincian Cicilan</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <span style="font-size:.85rem;color:#555;">Cicilan 1 (60%) — Dibayar sekarang</span>
+              <span id="cicilan-1-amount" style="font-weight:700;color:#1b5e20;font-size:.9rem;">IDR –</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:.85rem;color:#555;">Cicilan 2 (40%) — Dibayar sebelum kelas selesai</span>
+              <span id="cicilan-2-amount" style="font-weight:700;color:#1b5e20;font-size:.9rem;">IDR –</span>
+            </div>
+            <div style="margin-top:8px;font-size:.78rem;color:#666;font-style:italic;">* Konfirmasi jadwal cicilan 2 akan diatur bersama admin.</div>
+          </div>
+        </div>
+
         <!-- QRIS DETAILS -->
         <div id="payment-detail-qris" style="display:none;">
           <div class="qris-box">
@@ -823,16 +845,16 @@ const MEMBER_CODES_DEFAULT = [
 
 const DEFAULT_CLASSES = [
   // ── IELTS Preparation – Private ───────────────────────────────────────────
-  { key: 'express',           name: 'Express Coaching',                   hours: '5 Hours',  normalPrice: 1552600,  price: 1109000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
-  { key: 'basic',             name: '⭐ Basic Coaching',                   hours: '10 Hours', normalPrice: 2658600,  price: 1759000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
-  { key: 'intensive',         name: '⭐ Intensive Coaching',               hours: '20 Hours', normalPrice: 4618600,  price: 3100000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
-  { key: 'elite',             name: '⭐ ELITE Coaching',                   hours: '40 Hours', normalPrice: 8258600,  price: 5659000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
-  { key: 'whv',               name: 'IELTS General Training Coaching',    hours: '12 Hours', normalPrice: 2899000,  price: 1528155, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
+  { key: 'express',           name: 'Express Coaching',                   hours: '5 Hours',  normalPrice: 1713000,  price: 1199000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
+  { key: 'basic',             name: '⭐ Basic Coaching',                   hours: '10 Hours', normalPrice: 2656000,  price: 1859000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
+  { key: 'intensive',         name: '⭐ Intensive Coaching',               hours: '20 Hours', normalPrice: 4693000,  price: 3285000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
+  { key: 'elite',             name: '⭐ ELITE Coaching',                   hours: '40 Hours', normalPrice: 8427000,  price: 5899000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
+  { key: 'whv',               name: 'IELTS General Training Coaching',    hours: '12 Hours', normalPrice: 2400000,  price: 1680000, type: 'private',     category: 'ielts_prep', memberPrice: null, active: true },
   // ── IELTS Preparation – Group ─────────────────────────────────────────────
-  { key: 'semiprivate',       name: '⭐ Semi Private',                     hours: '20 Hours', normalPrice: 1309000,  price: 935000,  type: 'semiprivate', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', note: 'Not Yet Open', active: true },
-  { key: 'grammar_weekday',   name: 'IELTS All Skills — Beginner Class', hours: '10 Hours', normalPrice: 670600, price: 479000, type: 'group', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', scheduleOptions: ['Weekdays', 'Weekend'], active: true },
-  { key: 'wns',               name: 'Writing & Speaking Class',  hours: '15 Hours', normalPrice: 670600, price: 499000, type: 'group', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', note: 'Not Yet Open', active: true },
-  { key: 'bundle',            name: 'Bundle: W&S + Grammar',     hours: '22 Hours', normalPrice: 908600, price: 679000, type: 'group', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', note: 'Not Yet Open', active: true },
+  { key: 'semiprivate',       name: '⭐ Semi Private',                     hours: '20 Hours', normalPrice: 1364000,  price: 955000,  type: 'semiprivate', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', note: 'Not Yet Open', active: true },
+  { key: 'grammar_weekday',   name: 'IELTS All Skills — Beginner Class', hours: '10 Hours', normalPrice: 693000, price: 485000, type: 'group', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', scheduleOptions: ['Weekdays', 'Weekend'], active: true },
+  { key: 'wns',               name: 'Writing & Speaking Class',  hours: '15 Hours', normalPrice: 693000, price: 485000, type: 'group', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', note: 'Not Yet Open', active: true },
+  { key: 'bundle',            name: 'Bundle: W&S + Grammar',     hours: '22 Hours', normalPrice: 927000, price: 649000, type: 'group', category: 'ielts_prep', memberPrice: null, promoTag: '🇮🇩 Promo 17-an', note: 'Not Yet Open', active: true },
   // ── Scholarship Preparation ───────────────────────────────────────────────
   { key: 'scholarship',       name: '🎓 Scholarship Preparation 2027',    hours: '30 Jam IELTS + 10 Jam Scholarship', normalPrice: 14599000, price: 6499000, type: 'scholarship',    category: 'scholarship_prep', memberPrice: null, active: true },
   { key: 'chevening_group',   name: 'IELTS + Chevening Prep Essay (Group)', hours: '10 Jam IELTS + 4 Sesi Essay Prep', normalPrice: 849000, price: 849000,  type: 'scholarship',    category: 'scholarship_prep', memberPrice: null, active: false },
@@ -1195,6 +1217,7 @@ let selectedClass = null;
 let selectedCategory     = null;
 let selectedSchedule     = null;
 let selectedPaymentMethod = null;
+let selectedPaymentPlan = null;
 let memberCodeApplied = false;
 let promoCodeApplied  = false;
 let promoDiscount     = 0;
@@ -1420,6 +1443,20 @@ function selectPaymentMethod(method) {
   document.getElementById('f-payment-method-err').style.display = 'none';
 }
 
+function selectPaymentPlan(plan) {
+  selectedPaymentPlan = plan;
+  document.getElementById('btn-plan-lunas').classList.toggle('active', plan === 'lunas');
+  document.getElementById('btn-plan-cicilan').classList.toggle('active', plan === 'cicilan');
+  document.getElementById('cicilan-breakdown').style.display = plan === 'cicilan' ? 'block' : 'none';
+  document.getElementById('f-payment-plan-err').style.display = 'none';
+  // Update cicilan amounts based on current price
+  const total = currentPrice;
+  const c1 = Math.ceil(total * 0.6);
+  const c2 = total - c1;
+  document.getElementById('cicilan-1-amount').textContent = 'IDR ' + fmt(c1);
+  document.getElementById('cicilan-2-amount').textContent = 'IDR ' + fmt(c2);
+}
+
 function selectClass(radio) {
   document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
   radio.closest('.class-card').classList.add('selected');
@@ -1577,6 +1614,11 @@ async function submitForm() {
     document.getElementById('f-payment-method-err').scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
+  if (!selectedPaymentPlan) {
+    document.getElementById('f-payment-plan-err').style.display='block';
+    document.getElementById('f-payment-plan-err').scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
 
   const agreed = document.getElementById('refund-agree-checkbox').checked;
   if (!agreed) {
@@ -1625,6 +1667,9 @@ async function submitForm() {
     promoCode: appliedPromoCode || '',
     promoDiscount: promoDiscount || 0,
     paymentMethod: selectedPaymentMethod || '',
+    paymentPlan: selectedPaymentPlan || 'lunas',
+    installment1: selectedPaymentPlan === 'cicilan' ? Math.ceil(currentPrice * 0.6) : null,
+    installment2: selectedPaymentPlan === 'cicilan' ? (currentPrice - Math.ceil(currentPrice * 0.6)) : null,
     notes: notesVal,
   };
 
@@ -1750,7 +1795,7 @@ async function submitForm() {
 function sendWA() {
   const reg = window._lastReg;
   const info = classes.find(c => c.key === reg.classKey);
-  const msg = `Halo Tutory English! 👋\n\nSaya sudah mendaftar dan melakukan pembayaran.\n\n📋 *Detail Registrasi:*\n• Nama: ${reg.fullname}\n• Kelas: ${reg.className || info.name}${reg.classSchedule ? ' (' + reg.classSchedule + ')' : ''}\n• Durasi: ${info.hours}\n• Jumlah Bayar: IDR ${fmt(reg.amountPaid)}\n• Metode Bayar: ${reg.paymentMethod || '-'}\n• Kode Member: ${reg.memberCode || '-'}\n\nMohon konfirmasinya. Terima kasih! 🙏`;
+  const msg = `Halo Tutory English! 👋\n\nSaya sudah mendaftar dan melakukan pembayaran.\n\n📋 *Detail Registrasi:*\n• Nama: ${reg.fullname}\n• Kelas: ${reg.className || info.name}${reg.classSchedule ? ' (' + reg.classSchedule + ')' : ''}\n• Durasi: ${info.hours}\n• Jumlah Bayar: IDR ${fmt(reg.amountPaid)}\n• Metode Bayar: ${reg.paymentMethod || '-'}\n• Rencana Bayar: ${reg.paymentPlan === 'cicilan' ? 'Cicilan (Cicilan 1: IDR ' + fmt(reg.installment1) + ' | Cicilan 2: IDR ' + fmt(reg.installment2) + ')' : 'Lunas'}\n• Kode Member: ${reg.memberCode || '-'}\n\nMohon konfirmasinya. Terima kasih! 🙏`;
   window.open('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
