@@ -354,12 +354,30 @@
 
           <div id="pt-detail-bank" style="display:none;margin-bottom:16px;">
             <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;">
-              <div style="font-weight:700;font-size:.85rem;color:var(--blue);margin-bottom:10px;">🏦 Bank Transfer Details</div>
-              <div style="font-size:.9rem;line-height:2.2;">
-                <strong>Mandiri</strong> – 1550055576550<br>
-                a/n <strong>LENTERA INDONESIA GROUP</strong>
+              <div style="font-weight:700;font-size:.85rem;color:var(--blue);margin-bottom:12px;">🏦 Bank Transfer Details</div>
+              <!-- Mandiri -->
+              <div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:12px;margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                  <div>
+                    <div style="font-weight:700;font-size:.82rem;color:#1e3a8a;">🏦 Mandiri</div>
+                    <div style="font-size:.95rem;font-weight:800;letter-spacing:.04em;color:#111;margin:3px 0;">1550055576550</div>
+                    <div style="font-size:.75rem;color:var(--gray);">a/n PT LENTERA INDONESIA GROUP</div>
+                  </div>
+                  <button onclick="copyPtBankInfo('Mandiri','1550055576550')" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:.78rem;font-weight:700;cursor:pointer;">📋 Copy</button>
+                </div>
               </div>
-              <div style="font-size:.8rem;color:var(--gray);margin-top:8px;padding-top:8px;border-top:1px solid #e2e8f0;">Transfer amount: <strong style="color:#059669;">Rp 99.000</strong></div>
+              <!-- BCA -->
+              <div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:12px;margin-bottom:10px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                  <div>
+                    <div style="font-weight:700;font-size:.82rem;color:#1e3a8a;">🏦 BCA</div>
+                    <div style="font-size:.95rem;font-weight:800;letter-spacing:.04em;color:#111;margin:3px 0;">1083155551</div>
+                    <div style="font-size:.75rem;color:var(--gray);">a/n PT LENTERA INDONESIA GROUP</div>
+                  </div>
+                  <button onclick="copyPtBankInfo('BCA','1083155551')" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:.78rem;font-weight:700;cursor:pointer;">📋 Copy</button>
+                </div>
+              </div>
+              <div style="font-size:.8rem;color:var(--gray);padding-top:8px;border-top:1px solid #e2e8f0;">Transfer amount: <strong style="color:#059669;">Rp 99.000</strong></div>
             </div>
           </div>
 
@@ -772,12 +790,34 @@
         <!-- BANK TRANSFER DETAILS -->
         <div id="payment-detail-bank" style="display:none;">
           <div style="background:#f0f6ff;border:2px solid var(--blue);border-radius:12px;padding:20px;margin-bottom:20px;">
-            <div style="font-weight:700;font-size:.95rem;margin-bottom:12px;color:var(--blue);">🏦 Bank Transfer</div>
-            <div style="font-size:.9rem;line-height:2.1;">
-              <strong>Mandiri</strong> – 1550055576550<br>
-              a/n <strong>LENTERA INDONESIA GROUP</strong>
+            <div style="font-weight:700;font-size:.95rem;margin-bottom:14px;color:var(--blue);">🏦 Bank Transfer</div>
+            <!-- Mandiri -->
+            <div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:14px;margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <div>
+                  <div style="font-weight:700;font-size:.88rem;color:#1e3a8a;">🏦 Mandiri</div>
+                  <div style="font-size:1rem;font-weight:800;letter-spacing:.05em;color:#111;margin:4px 0;">1550055576550</div>
+                  <div style="font-size:.8rem;color:var(--gray);">a/n PT LENTERA INDONESIA GROUP</div>
+                </div>
+                <button onclick="copyBankInfo('Mandiri','1550055576550')" id="copy-mandiri" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:.82rem;font-weight:700;cursor:pointer;white-space:nowrap;">📋 Copy</button>
+              </div>
             </div>
-            <div style="font-size:.78rem;color:var(--gray);margin-top:6px;">Keterangan transfer: nama lengkap kamu</div>
+            <!-- BCA -->
+            <div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:14px;margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                <div>
+                  <div style="font-weight:700;font-size:.88rem;color:#1e3a8a;">🏦 BCA</div>
+                  <div style="font-size:1rem;font-weight:800;letter-spacing:.05em;color:#111;margin:4px 0;">1083155551</div>
+                  <div style="font-size:.8rem;color:var(--gray);">a/n PT LENTERA INDONESIA GROUP</div>
+                </div>
+                <button onclick="copyBankInfo('BCA','1083155551')" id="copy-bca" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:.82rem;font-weight:700;cursor:pointer;white-space:nowrap;">📋 Copy</button>
+              </div>
+            </div>
+            <!-- Total -->
+            <div id="bank-total-display" style="background:#eff6ff;border-radius:8px;padding:10px 14px;font-size:.88rem;color:#1e3a8a;font-weight:600;">
+              💳 Transfer amount: <span id="bank-total-amount" style="font-size:1rem;font-weight:800;">–</span>
+            </div>
+            <div style="font-size:.78rem;color:var(--gray);margin-top:8px;">Include your full name as the transfer note.</div>
           </div>
         </div>
 
@@ -1632,6 +1672,35 @@ function selectPaymentMethod(method) {
   document.getElementById('payment-detail-qris').style.display = method === 'QRIS' ? 'block' : 'none';
   document.getElementById('payment-detail-bank').style.display = method === 'Bank Transfer' ? 'block' : 'none';
   document.getElementById('f-payment-method-err').style.display = 'none';
+  // Update the total shown in bank transfer section
+  if (method === 'Bank Transfer') {
+    const el = document.getElementById('bank-total-amount');
+    if (el) el.textContent = 'IDR ' + fmt(currentPrice);
+  }
+}
+
+// Copy bank account + total for main registration
+function copyBankInfo(bankName, accountNo) {
+  const amount = 'IDR ' + fmt(currentPrice);
+  const text = accountNo + '\n' + bankName + ' — a/n PT LENTERA INDONESIA GROUP\nTransfer: ' + amount;
+  navigator.clipboard.writeText(text).then(() => {
+    const btnId = bankName === 'BCA' ? 'copy-bca' : 'copy-mandiri';
+    const btn = document.getElementById(btnId);
+    if (btn) { btn.textContent = '✅ Copied!'; setTimeout(() => btn.textContent = '📋 Copy', 2000); }
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  });
+}
+
+// Copy bank account + total for pre-test
+function copyPtBankInfo(bankName, accountNo) {
+  const text = accountNo + '\n' + bankName + ' — a/n PT LENTERA INDONESIA GROUP\nTransfer: Rp 99.000';
+  navigator.clipboard.writeText(text).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  });
 }
 
 function selectPaymentPlan(plan) {
@@ -1708,6 +1777,9 @@ function updatePriceDisplay() {
     oldEl.textContent = '';
   }
   document.getElementById('ps-price').textContent = 'IDR ' + fmt(currentPrice);
+  // Keep bank transfer total in sync
+  const bankTotalEl = document.getElementById('bank-total-amount');
+  if (bankTotalEl) bankTotalEl.textContent = 'IDR ' + fmt(currentPrice);
 }
 
 // ============================================================
