@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Tutory English</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f4f8;color:#1a202c;min-height:100vh}
+  :root{--blue:#1d4ed8;--blue-light:#eff6ff;--green:#059669;--red:#dc2626;--gray:#64748b;--border:#e2e8f0}
+
+  /* LOGIN */
+  #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#1e3a8a,#2563eb)}
+  .login-card{background:#fff;border-radius:20px;padding:40px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+  .login-card h1{font-size:1.3rem;font-weight:800;color:#1e3a8a;margin-bottom:4px}
+  .login-card p{font-size:.85rem;color:var(--gray);margin-bottom:28px}
+  .login-card input[type="password"],.login-card input[type="text"]{width:100%;padding:12px 44px 12px 16px;border:2px solid var(--border);border-radius:10px;font-size:.95rem;outline:none;transition:.2s;box-sizing:border-box;}
+  .login-card input[type="password"]:focus,.login-card input[type="text"]:focus{border-color:var(--blue)}
+  .login-card button{width:100%;margin-top:14px;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer}
+  .login-card button:hover{background:#1e40af}
+  .login-err{color:var(--red);font-size:.82rem;margin-top:8px;display:none}
+
+  /* MAIN */
+  #admin-screen{display:none}
+  .topbar{background:#1e3a8a;color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+  .topbar h1{font-size:1.1rem;font-weight:800;letter-spacing:.02em}
+  .topbar button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:600}
+  .topbar button:hover{background:rgba(255,255,255,.25)}
+
+  .container{max-width:1300px;margin:0 auto;padding:24px 16px}
+
+  /* STAT CARDS */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:28px}
+  .stat-card{background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+  .stat-card .label{font-size:.75rem;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+  .stat-card .value{font-size:1.8rem;font-weight:800;color:#1e3a8a}
+  .stat-card .sub{font-size:.78rem;color:var(--gray);margin-top:4px}
+
+  /* SECTION */
+  .section{background:#fff;border-radius:16px;padding:22px 24px;box-shadow:0 1px 4px rgba(0,0,0,.07);margin-bottom:24px}
+  .section h2{font-size:1rem;font-weight:800;color:#1e3a8a;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--blue-light);display:flex;align-items:center;gap:8px}
+
+  /* PERIOD SELECTOR */
+  .period-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+  .period-bar select, .period-bar input{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem;outline:none}
+  .period-bar select:focus, .period-bar input:focus{border-color:var(--blue)}
+  .period-bar button{padding:8px 16px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer}
+
+  /* SOURCE CHART */
+  .source-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+  .source-item{background:var(--blue-light);border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .source-item .sname{font-size:.85rem;font-weight:600;color:#1e3a8a}
+  .source-item .scount{font-size:1.1rem;font-weight:800;color:var(--blue);background:#fff;padding:3px 10px;border-radius:20px}
+
+  /* TABLE */
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:.82rem}
+  th{background:#f8fafc;color:var(--gray);font-weight:700;padding:10px 12px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap}
+  td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  tr:hover td{background:#f8fafc}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;white-space:nowrap}
+  .badge-private{background:#dbeafe;color:#1d4ed8}
+  .badge-semiprivate{background:#ede9fe;color:#7c3aed}
+  .badge-group{background:#d1fae5;color:#065f46}
+  .badge-scholarship{background:#fef9c3;color:#854d0e}
+  .badge-idp{background:#fee2e2;color:#991b1b}
+  .badge-lunas{background:#d1fae5;color:#065f46}
+  .badge-cicilan{background:#fef3c7;color:#92400e}
+  .btn-sm{padding:5px 10px;border:none;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:600}
+  .btn-view{background:#eff6ff;color:var(--blue)}
+  .btn-dl{background:#f0fdf4;color:var(--green)}
+  .btn-sm:hover{filter:brightness(.93)}
+
+  /* FILTER BAR */
+  .filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+  .filter-bar input, .filter-bar select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;outline:none;min-width:140px}
+  .filter-bar input:focus,.filter-bar select:focus{border-color:var(--blue)}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:16px}
+  .modal-overlay.open{display:flex}
+  .modal{background:#fff;border-radius:16px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;padding:28px}
+  .modal h3{font-size:1.1rem;font-weight:800;color:#1e3a8a;margin-bottom:20px}
+  .modal-close{float:right;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--gray)}
+  .detail-row{display:grid;grid-template-columns:140px 1fr;gap:6px 12px;margin-bottom:8px;font-size:.85rem}
+  .detail-row .dk{color:var(--gray);font-weight:600}
+  .proof-img{width:100%;border-radius:8px;margin-top:12px;border:1px solid var(--border)}
+  .proof-actions{display:flex;gap:10px;margin-top:12px}
+  .proof-actions a{padding:9px 16px;border-radius:8px;font-size:.82rem;font-weight:700;text-decoration:none;cursor:pointer}
+  .btn-download{background:var(--green);color:#fff}
+  .btn-viewfull{background:var(--blue);color:#fff}
+
+  /* LOADING */
+  .loading{text-align:center;padding:40px;color:var(--gray);font-size:.9rem}
+  .empty{text-align:center;padding:32px;color:var(--gray);font-size:.85rem}
+
+  /* PAGINATION */
+  .pagination{display:flex;gap:6px;align-items:center;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+  .pagination button{padding:6px 12px;border:1.5px solid var(--border);background:#fff;border-radius:7px;cursor:pointer;font-size:.82rem;font-weight:600}
+  .pagination button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .pagination button:disabled{opacity:.4;cursor:default}
+  .pagination span{font-size:.82rem;color:var(--gray)}
+
+  @media(max-width:600px){
+    .topbar{padding:12px 16px}
+    .container{padding:16px 10px}
+    .section{padding:16px}
+    .stats-grid{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div style="font-size:2rem;margin-bottom:16px;text-align:center">🏫</div>
+    <h1>Tutory English</h1>
+    <p>Admin Panel — Enter password to continue</p>
+    <div style="position:relative;display:flex;align-items:center;">
+      <input type="password" id="pwd-input" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()" style="flex:1;padding:12px 44px 12px 16px;border:2px solid var(--border);border-radius:10px;font-size:.95rem;outline:none;width:100%;">
+      <button type="button" onclick="togglePwd()" id="pwd-toggle" style="position:absolute;right:12px;background:none;border:none;cursor:pointer;font-size:1rem;padding:4px;color:#94a3b8;line-height:1;" title="Show/hide password">👁️</button>
+    </div>
+    <button onclick="doLogin()">Enter</button>
+    <div class="login-err" id="login-err">❌ Incorrect password</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-screen">
+  <div class="topbar">
+    <h1>🏫 Admin Panel — Tutory English</h1>
+    <button onclick="doLogout()">Logout</button>
+  </div>
+
+  <div class="container">
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid" id="stat-cards">
+      <div class="stat-card"><div class="label">Total Registrations</div><div class="value" id="stat-total">—</div></div>
+      <div class="stat-card"><div class="label">This Month</div><div class="value" id="stat-month">—</div></div>
+      <div class="stat-card"><div class="label">Private Class</div><div class="value" id="stat-private">—</div></div>
+      <div class="stat-card"><div class="label">Group Class</div><div class="value" id="stat-group">—</div></div>
+      <div class="stat-card"><div class="label">Semi Private</div><div class="value" id="stat-semi">—</div></div>
+      <div class="stat-card">
+        <div class="label">Total Revenue</div>
+        <div class="value" id="stat-revenue" style="font-size:1.2rem;filter:blur(6px);user-select:none">Rp •••••••</div>
+        <div style="margin-top:8px">
+          <button id="revenue-toggle-btn" onclick="toggleRevenue()" style="font-size:.72rem;padding:4px 10px;background:#e0e7ff;color:#3730a3;border:none;border-radius:6px;cursor:pointer;font-weight:600">🔒 CEO Only</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MONTHLY OVERVIEW -->
+    <div class="section">
+      <h2>📅 Registrations by Period</h2>
+      <div class="period-bar">
+        <label style="font-size:.82rem;font-weight:600;color:var(--gray)">From</label>
+        <input type="month" id="period-from" value="">
+        <label style="font-size:.82rem;font-weight:600;color:var(--gray)">To</label>
+        <input type="month" id="period-to" value="">
+        <button onclick="loadMonthly()">Apply</button>
+        <button onclick="resetPeriod()" style="background:#fff;color:var(--gray);border:1.5px solid var(--border)">Reset</button>
+      </div>
+      <div id="monthly-chart" class="table-wrap">
+        <div class="loading">Loading…</div>
+      </div>
+    </div>
+
+    <!-- SOURCE BREAKDOWN -->
+    <div class="section">
+      <h2>📱 Lead Source Breakdown <span style="font-size:.78rem;font-weight:400;color:var(--gray)" id="source-period-label"></span></h2>
+      <div class="filter-bar" style="margin-bottom:12px">
+        <label style="font-size:.82rem;font-weight:600;color:var(--gray)">📅 From</label>
+        <input type="month" id="source-from" oninput="applySourceFilter()">
+        <label style="font-size:.82rem;font-weight:600;color:var(--gray)">To</label>
+        <input type="month" id="source-to" oninput="applySourceFilter()">
+        <button onclick="resetSourceFilter()" style="background:#fff;color:var(--gray);border:1.5px solid var(--border);padding:8px 14px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer">Reset</button>
+        <span id="source-filter-label" style="font-size:.8rem;color:var(--gray);align-self:center"></span>
+      </div>
+      <div id="source-grid" class="source-grid">
+        <div class="loading">Loading…</div>
+      </div>
+    </div>
+
+    <!-- STUDENT DATA TABLE -->
+    <div class="section">
+      <h2>👩‍🎓 Student Registrations</h2>
+
+      <!-- ROW 1: search + type + plan -->
+      <div class="filter-bar">
+        <input type="text" id="f-search" placeholder="🔍 Search name / phone…" oninput="applyFilters()" style="min-width:200px;">
+        <select id="f-class-type" onchange="applyFilters()">
+          <option value="">All class types</option>
+          <option value="private">Private</option>
+          <option value="semiprivate">Semi Private</option>
+          <option value="group">Group</option>
+          <option value="scholarship">Scholarship</option>
+        </select>
+        <select id="f-plan" onchange="applyFilters()">
+          <option value="">All payment plans</option>
+          <option value="lunas">Lunas</option>
+          <option value="cicilan">Cicilan</option>
+        </select>
+      </div>
+
+      <!-- ROW 2: date range + reset + export -->
+      <div class="filter-bar" style="margin-bottom:12px;">
+        <label style="font-size:.8rem;font-weight:600;color:var(--gray);white-space:nowrap;">📅 From</label>
+        <input type="date" id="f-date-from" onchange="applyFilters()" style="min-width:140px;">
+        <label style="font-size:.8rem;font-weight:600;color:var(--gray);white-space:nowrap;">To</label>
+        <input type="date" id="f-date-to" onchange="applyFilters()" style="min-width:140px;">
+        <button onclick="resetDateFilter()" style="padding:8px 14px;background:#fff;color:var(--gray);border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;">Reset</button>
+        <div style="flex:1"></div>
+        <span style="font-size:.8rem;color:var(--gray);align-self:center;" id="filter-count"></span>
+        <button onclick="exportFilteredCSV()" style="padding:8px 16px;background:#059669;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;">⬇ CSV</button>
+        <button onclick="exportFilteredXLSX()" style="padding:8px 16px;background:#1d4ed8;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;">⬇ Excel</button>
+        <button onclick="openAddModal()" style="padding:8px 16px;background:#7c3aed;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;">➕ Add Student</button>
+        <button id="bulk-delete-btn" onclick="bulkDelete()" style="padding:8px 16px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;display:none;">🗑 Delete Selected (<span id="bulk-count">0</span>)</button>
+      </div>
+      <div class="table-wrap">
+        <table id="reg-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="check-all" onclick="toggleAllChecks(this)" title="Select all"></th>
+              <th>#</th>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Class</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Plan</th>
+              <th>Promo</th>
+              <th>Source</th>
+              <th>Proof</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reg-tbody">
+            <tr><td colspan="13" class="loading">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+  </div><!-- /container -->
+</div><!-- /admin-screen -->
+
+<!-- ADD STUDENT MODAL -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal" style="max-width:520px;max-height:90vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeAddModal()">✕</button>
+    <h3>➕ Add Student Manually</h3>
+    <div style="display:grid;gap:10px;margin-top:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label style="font-size:.8rem;font-weight:600;color:#374151">Full Name *</label><input id="add-fullname" type="text" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px" placeholder="Full name"></div>
+        <div><label style="font-size:.8rem;font-weight:600;color:#374151">Nickname</label><input id="add-nickname" type="text" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px" placeholder="Nickname"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label style="font-size:.8rem;font-weight:600;color:#374151">Phone *</label><input id="add-phone" type="text" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px" placeholder="08xxx"></div>
+        <div><label style="font-size:.8rem;font-weight:600;color:#374151">Email</label><input id="add-email" type="email" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px" placeholder="email@email.com"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label style="font-size:.8rem;font-weight:600;color:#374151">Class Name *</label><input id="add-class-name" type="text" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px" placeholder="e.g. Basic Coaching"></div>
+        <div><label style="font-size:.8rem;font-weight:600;color:#374151">Class Hours</label><input id="add-class-hours" type="text" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px" placeholder="e.g. 10 Hours"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label style="font-size:.8rem;font-weight:600;color:#374151">Amount Paid (IDR) *</label><input id="add-amount" type="number" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px" placeholder="e.g. 1859000"></div>
+        <div><label style="font-size:.8rem;font-weight:600;color:#374151">Payment Plan</label>
+          <select id="add-plan" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px">
+            <option value="lunas">Lunas</option>
+            <option value="cicilan">Cicilan</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label style="font-size:.8rem;font-weight:600;color:#374151">Payment Method</label>
+          <select id="add-method" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px">
+            <option value="">— Select —</option>
+            <option value="QRIS">QRIS</option>
+            <option value="Bank Transfer (Mandiri)">Bank Transfer (Mandiri)</option>
+            <option value="Bank Transfer (BCA)">Bank Transfer (BCA)</option>
+          </select>
+        </div>
+        <div><label style="font-size:.8rem;font-weight:600;color:#374151">Source</label><input id="add-source" type="text" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px" placeholder="e.g. Instagram"></div>
+      </div>
+      <div><label style="font-size:.8rem;font-weight:600;color:#374151">Notes</label><textarea id="add-notes" rows="2" style="width:100%;padding:8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.88rem;margin-top:4px;resize:vertical" placeholder="Optional notes"></textarea></div>
+      <div id="add-error" style="color:#dc2626;font-size:.82rem;display:none"></div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button onclick="closeAddModal()" style="flex:1;padding:10px;background:#f1f5f9;color:#374151;border:none;border-radius:8px;font-weight:600;cursor:pointer">Cancel</button>
+        <button onclick="submitAddStudent()" id="add-submit-btn" style="flex:2;padding:10px;background:#7c3aed;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer">➕ Add Student</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3>📋 Student Detail</h3>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────
+const ADMIN_PASSWORD = 'TTR2026-LIG';
+const SB_URL  = 'https://nhsbgexkihuzptkrtzsi.supabase.co';
+const SB_KEY  = 'sb_publishable_J9JeoMLphl_OLShvDtpF3g_GjCtju1e';
+
+// ── STATE ────────────────────────────────────────────────────
+let db, allRegs = [], filtered = [], currentPage = 1;
+const PAGE_SIZE = 20;
+
+// ── LOGIN ────────────────────────────────────────────────────
+function togglePwd() {
+  const inp = document.getElementById('pwd-input');
+  const btn = document.getElementById('pwd-toggle');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+function doLogin() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === ADMIN_PASSWORD) {
+    sessionStorage.setItem('ttr_admin', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    initAdmin();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('ttr_admin');
+  location.reload();
+}
+
+// Auto-login if session active
+window.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('ttr_admin') === '1') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    initAdmin();
+  }
+  document.getElementById('pwd-input').focus();
+
+  // Set default period: current month
+  const now = new Date();
+  const ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  document.getElementById('period-from').value = ym.slice(0,7).replace('/','-');
+  document.getElementById('period-to').value   = ym.slice(0,7).replace('/','-');
+  // Set to 6 months ago → today
+  const sixAgo = new Date(now); sixAgo.setMonth(sixAgo.getMonth()-5);
+  const ymAgo = sixAgo.getFullYear() + '-' + String(sixAgo.getMonth()+1).padStart(2,'0');
+  document.getElementById('period-from').value = ymAgo;
+  document.getElementById('period-to').value   = ym;
+});
+
+// ── INIT ─────────────────────────────────────────────────────
+async function initAdmin() {
+  const { createClient } = supabase;
+  db = createClient(SB_URL, SB_KEY);
+  await loadAll();
+}
+
+async function loadAll() {
+  try {
+    const { data, error } = await db
+      .from('registrations')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    allRegs = data || [];
+    renderStats();
+    loadMonthly();
+    renderSourceBreakdown(allRegs);
+    populateMonthFilter();
+    applyFilters();
+  } catch(e) {
+    console.error(e);
+    document.getElementById('reg-tbody').innerHTML = `<tr><td colspan="13" class="empty">⚠️ Failed to load data: ${e.message}</td></tr>`;
+  }
+}
+
+// ── HELPERS ──────────────────────────────────────────────────
+function fmt(n) { return Number(n||0).toLocaleString('id-ID'); }
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  const date = dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+  const time = dt.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  return date + ' ' + time;
+}
+function getMonth(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0');
+}
+function getClassType(reg) {
+  const k = (reg.class_key || '').toLowerCase();
+  if (k.includes('semi')) return 'semiprivate';
+  if (['grammar_weekday','wns','bundle'].includes(k)) return 'group';
+  if (k.includes('scholar')) return 'scholarship';
+  if (k === 'idp') return 'idp';
+  return 'private';
+}
+function typeBadge(reg) {
+  const t = getClassType(reg);
+  const labels = {private:'Private',semiprivate:'Semi Private',group:'Group',scholarship:'Scholarship',idp:'IDP'};
+  return `<span class="badge badge-${t}">${labels[t]||t}</span>`;
+}
+function planBadge(plan) {
+  if (!plan || plan === 'lunas') return `<span class="badge badge-lunas">Lunas</span>`;
+  return `<span class="badge badge-cicilan">Cicilan</span>`;
+}
+
+// ── STATS ────────────────────────────────────────────────────
+function renderStats() {
+  const now = new Date();
+  const thisYM = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  const thisMonth = allRegs.filter(r => getMonth(r.created_at) === thisYM);
+  const privates  = allRegs.filter(r => getClassType(r) === 'private');
+  const groups    = allRegs.filter(r => getClassType(r) === 'group');
+  const semis     = allRegs.filter(r => getClassType(r) === 'semiprivate');
+  const revenue   = allRegs.reduce((s,r) => s + Number(r.amount_paid||0), 0);
+
+  document.getElementById('stat-total').textContent   = allRegs.length;
+  document.getElementById('stat-month').textContent   = thisMonth.length;
+  document.getElementById('stat-private').textContent = privates.length;
+  document.getElementById('stat-group').textContent   = groups.length;
+  document.getElementById('stat-semi').textContent    = semis.length;
+  document.getElementById('stat-revenue').textContent = 'Rp ' + fmt(revenue);
+}
+
+// ── MONTHLY TABLE ─────────────────────────────────────────────
+function loadMonthly() {
+  const from = document.getElementById('period-from').value;
+  const to   = document.getElementById('period-to').value;
+  document.getElementById('source-period-label').textContent = from && to ? `(${from} → ${to})` : '';
+
+  const inPeriod = allRegs.filter(r => {
+    const ym = getMonth(r.created_at);
+    return (!from || ym >= from) && (!to || ym <= to);
+  });
+
+  // Group by month
+  const byMonth = {};
+  inPeriod.forEach(r => {
+    const ym = getMonth(r.created_at) || 'Unknown';
+    if (!byMonth[ym]) byMonth[ym] = { total:0, private:0, semiprivate:0, group:0, scholarship:0 };
+    byMonth[ym].total++;
+    const t = getClassType(r);
+    if (byMonth[ym][t] !== undefined) byMonth[ym][t]++;
+    else byMonth[ym].scholarship = (byMonth[ym].scholarship||0)+1;
+  });
+
+  const months = Object.keys(byMonth).sort().reverse();
+  if (!months.length) {
+    document.getElementById('monthly-chart').innerHTML = '<div class="empty">No data for this period.</div>';
+    renderSourceBreakdown([]);
+    return;
+  }
+
+  let html = `<table><thead><tr>
+    <th>Month</th><th>Total</th><th>Private</th><th>Semi Private</th><th>Group</th><th>Scholarship</th>
+  </tr></thead><tbody>`;
+  months.forEach(ym => {
+    const d = byMonth[ym];
+    const label = ym === 'Unknown' ? 'Unknown' : new Date(ym+'-01').toLocaleDateString('en-US',{month:'long',year:'numeric'});
+    html += `<tr>
+      <td style="font-weight:600">${label}</td>
+      <td><strong>${d.total}</strong></td>
+      <td>${d.private||0}</td>
+      <td>${d.semiprivate||0}</td>
+      <td>${d.group||0}</td>
+      <td>${d.scholarship||0}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('monthly-chart').innerHTML = html;
+  renderSourceBreakdown(inPeriod);
+}
+
+function resetPeriod() {
+  document.getElementById('period-from').value = '';
+  document.getElementById('period-to').value   = '';
+  loadMonthly();
+  renderSourceBreakdown(allRegs);
+}
+
+// ── SOURCE BREAKDOWN ─────────────────────────────────────────
+function renderSourceBreakdown(regs) {
+  const counts = {};
+  regs.forEach(r => {
+    const s = (r.source || 'Unknown').trim();
+    counts[s] = (counts[s]||0) + 1;
+  });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  if (!sorted.length) {
+    document.getElementById('source-grid').innerHTML = '<div class="empty">No data.</div>';
+    return;
+  }
+  document.getElementById('source-grid').innerHTML = sorted.map(([s,c]) =>
+    `<div class="source-item"><span class="sname">${s}</span><span class="scount">${c}</span></div>`
+  ).join('');
+}
+
+function applySourceFilter() {
+  const from = document.getElementById('source-from').value; // YYYY-MM
+  const to   = document.getElementById('source-to').value;
+  let regs = allRegs;
+  if (from || to) {
+    regs = allRegs.filter(r => {
+      const ym = (r.created_at || '').slice(0,7);
+      if (from && ym < from) return false;
+      if (to   && ym > to)   return false;
+      return true;
+    });
+    const lbl = from && to ? `${from} → ${to}` : from ? `From ${from}` : `Until ${to}`;
+    document.getElementById('source-filter-label').textContent = `Showing: ${lbl} (${regs.length} registrations)`;
+    document.getElementById('source-period-label').textContent = `(${lbl})`;
+  } else {
+    document.getElementById('source-filter-label').textContent = '';
+    document.getElementById('source-period-label').textContent = '';
+  }
+  renderSourceBreakdown(regs);
+}
+
+function resetSourceFilter() {
+  document.getElementById('source-from').value = '';
+  document.getElementById('source-to').value   = '';
+  document.getElementById('source-filter-label').textContent = '';
+  document.getElementById('source-period-label').textContent = '';
+  renderSourceBreakdown(allRegs);
+}
+
+// ── MONTH FILTER POPULATE ─────────────────────────────────────
+function populateMonthFilter() {
+  // Date range filter replaced month dropdown — nothing to populate
+}
+
+// ── FILTERS & TABLE ───────────────────────────────────────────
+function resetDateFilter() {
+  document.getElementById('f-date-from').value = '';
+  document.getElementById('f-date-to').value   = '';
+  applyFilters();
+}
+
+function applyFilters() {
+  const q        = document.getElementById('f-search').value.toLowerCase();
+  const ctype    = document.getElementById('f-class-type').value;
+  const plan     = document.getElementById('f-plan').value;
+  const dateFrom = document.getElementById('f-date-from').value; // YYYY-MM-DD
+  const dateTo   = document.getElementById('f-date-to').value;
+
+  filtered = allRegs.filter(r => {
+    const name  = (r.fullname||'').toLowerCase();
+    const phone = (r.phone||'').toLowerCase();
+    if (q && !name.includes(q) && !phone.includes(q)) return false;
+    if (ctype && getClassType(r) !== ctype) return false;
+    if (plan) {
+      const rPlan = r.payment_plan || 'lunas';
+      if (plan === 'lunas'  && rPlan !== 'lunas')  return false;
+      if (plan === 'cicilan'&& rPlan !== 'cicilan') return false;
+    }
+    if (dateFrom || dateTo) {
+      const d = r.created_at ? r.created_at.slice(0,10) : '';
+      if (dateFrom && d < dateFrom) return false;
+      if (dateTo   && d > dateTo)   return false;
+    }
+    return true;
+  });
+
+  document.getElementById('filter-count').textContent = `${filtered.length} student${filtered.length!==1?'s':''}`;
+  currentPage = 1;
+  renderTable();
+  renderPagination();
+}
+
+function renderTable() {
+  const start = (currentPage-1)*PAGE_SIZE;
+  const page  = filtered.slice(start, start+PAGE_SIZE);
+  const tbody = document.getElementById('reg-tbody');
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="13" class="empty">No students found.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = page.map((r,i) => {
+    const hasProof = !!r.proof_url;
+    return `<tr>
+      <td><input type="checkbox" class="row-check" data-id="${r.id}" onchange="updateBulkBar()"></td>
+      <td style="color:var(--gray);font-size:.75rem">${start+i+1}</td>
+      <td style="white-space:nowrap">${fmtDate(r.created_at)}</td>
+      <td>
+        <div style="font-weight:600">${r.fullname||'—'}</div>
+        <div style="font-size:.75rem;color:var(--gray)">${r.nickname||''}</div>
+      </td>
+      <td style="white-space:nowrap">${r.phone||'—'}</td>
+      <td>
+        <div style="font-weight:600;max-width:160px">${r.class_name||'—'}</div>
+        <div style="font-size:.73rem;color:var(--gray)">${r.class_hours||''}</div>
+      </td>
+      <td>${typeBadge(r)}</td>
+      <td style="white-space:nowrap;font-weight:700">Rp ${fmt(r.amount_paid)}</td>
+      <td>${planBadge(r.payment_plan)}</td>
+      <td style="font-size:.78rem;color:var(--gray)">${r.promo_code||'—'}</td>
+      <td style="font-size:.78rem">${r.source||'—'}</td>
+      <td>
+        ${hasProof
+          ? `<button class="btn-sm btn-view" onclick="viewProof(${JSON.stringify(r.proof_url).replace(/"/g,'&quot;')},${JSON.stringify(r.fullname||'').replace(/"/g,'&quot;')})">👁 View</button>`
+          : '<span style="color:#cbd5e1;font-size:.75rem">No file</span>'
+        }
+        <button class="btn-sm btn-view" onclick='showDetail(${JSON.stringify(JSON.stringify(r))})' style="margin-top:4px;display:block">📋 Detail</button>
+      </td>
+      <td style="white-space:nowrap">
+        <button class="btn-sm" onclick="deleteReg('${r.id}','${(r.fullname||'').replace(/'/g,'\\\'')}')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.75rem;font-weight:600;">🗑 Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderPagination() {
+  const total = Math.ceil(filtered.length / PAGE_SIZE);
+  const pag = document.getElementById('pagination');
+  if (total <= 1) { pag.innerHTML=''; return; }
+  let html = `<span>Page ${currentPage} of ${total}</span>`;
+  html += `<button ${currentPage===1?'disabled':''} onclick="goPage(${currentPage-1})">← Prev</button>`;
+  for (let p=Math.max(1,currentPage-2);p<=Math.min(total,currentPage+2);p++) {
+    html += `<button class="${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+  }
+  html += `<button ${currentPage===total?'disabled':''} onclick="goPage(${currentPage+1})">Next →</button>`;
+  pag.innerHTML = html;
+}
+
+function goPage(p) { currentPage=p; renderTable(); renderPagination(); window.scrollTo(0,0); }
+
+// ── DETAIL MODAL ──────────────────────────────────────────────
+function showDetail(jsonStr) {
+  const r = JSON.parse(jsonStr);
+  const rows = [
+    ['Full Name',    r.fullname],
+    ['Nickname',     r.nickname],
+    ['Date of Birth',r.dob],
+    ['Gender',       r.gender],
+    ['Email',        r.email],
+    ['Phone',        r.phone],
+    ['Instagram',    r.instagram],
+    ['Occupation',   r.occupation],
+    ['Purpose',      r.purpose],
+    ['Target Band',  r.target_band],
+    ['Current Band', r.current_band],
+    ['Weak Skill',   r.weak_skill],
+    ['Source',       r.source],
+    ['Class',        r.class_name],
+    ['Hours',        r.class_hours],
+    ['Schedule',     r.class_schedule],
+    ['Amount Paid',  r.amount_paid ? 'Rp '+fmt(r.amount_paid) : '—'],
+    ['Payment Method',r.payment_method],
+    ['Payment Plan', r.payment_plan],
+    ['Installment 1',r.installment1 ? 'Rp '+fmt(r.installment1) : '—'],
+    ['Installment 2',r.installment2 ? 'Rp '+fmt(r.installment2) : '—'],
+    ['Promo Code',   r.promo_code],
+    ['Promo Discount',r.promo_discount ? 'Rp '+fmt(r.promo_discount) : '—'],
+    ['Member Code',  r.member_code],
+    ['Notes',        r.notes],
+    ['Registered',   fmtDate(r.created_at)],
+  ];
+  let html = rows.filter(([,v])=>v).map(([k,v])=>`
+    <div class="detail-row"><span class="dk">${k}</span><span>${v}</span></div>
+  `).join('');
+
+  if (r.proof_url) {
+    html += `<div style="margin-top:16px;font-weight:700;font-size:.85rem;color:#1e3a8a">📎 Payment Proof</div>`;
+    if (/\.(jpg|jpeg|png|gif|webp)$/i.test(r.proof_url)) {
+      html += `<img src="${r.proof_url}" class="proof-img" alt="Proof">`;
+    }
+    html += `<div class="proof-actions">
+      <a href="${r.proof_url}" target="_blank" class="btn-viewfull">🔍 View Full</a>
+      <a href="${r.proof_url}" download class="btn-download">⬇️ Download</a>
+    </div>`;
+  }
+
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function viewProof(url, name) {
+  const r = { proof_url: url, fullname: name };
+  let html = `<div style="font-weight:700;font-size:.85rem;color:#1e3a8a;margin-bottom:12px">📎 Payment Proof — ${name}</div>`;
+  if (/\.(jpg|jpeg|png|gif|webp)$/i.test(url)) {
+    html += `<img src="${url}" class="proof-img" alt="Proof">`;
+  } else {
+    html += `<div style="padding:20px;background:#f8fafc;border-radius:8px;text-align:center;color:var(--gray)">📄 Non-image file (PDF or other)</div>`;
+  }
+  html += `<div class="proof-actions">
+    <a href="${url}" target="_blank" class="btn-viewfull">🔍 View Full</a>
+    <a href="${url}" download class="btn-download">⬇️ Download</a>
+  </div>`;
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('detail-modal').classList.remove('open'); }
+document.getElementById('detail-modal').addEventListener('click', e => { if (e.target===e.currentTarget) closeModal(); });
+
+// ── DELETE REGISTRATION ───────────────────────────────────────
+async function deleteReg(id, name) {
+  if (!confirm(`Delete registration for "${name}"?\n\nThis cannot be undone.`)) return;
+  try {
+    const { error } = await db.from('registrations').delete().eq('id', id);
+    if (error) throw error;
+    // Remove from local data
+    allRegs = allRegs.filter(r => String(r.id) !== String(id));
+    applyFilters();
+    alert(`✅ Registration for "${name}" has been deleted.`);
+  } catch(e) {
+    alert('❌ Delete failed: ' + e.message);
+  }
+}
+
+// ── ADD STUDENT MODAL ─────────────────────────────────────────
+// ── BULK DELETE ───────────────────────────────────────────────
+function toggleAllChecks(master) {
+  document.querySelectorAll('.row-check').forEach(cb => cb.checked = master.checked);
+  updateBulkBar();
+}
+
+function updateBulkBar() {
+  const checked = document.querySelectorAll('.row-check:checked');
+  const btn = document.getElementById('bulk-delete-btn');
+  const countEl = document.getElementById('bulk-count');
+  const masterCb = document.getElementById('check-all');
+  const all = document.querySelectorAll('.row-check');
+  countEl.textContent = checked.length;
+  btn.style.display = checked.length > 0 ? 'inline-block' : 'none';
+  if (masterCb) masterCb.indeterminate = checked.length > 0 && checked.length < all.length;
+  if (masterCb && checked.length === all.length && all.length > 0) masterCb.checked = true;
+  if (masterCb && checked.length === 0) { masterCb.checked = false; masterCb.indeterminate = false; }
+}
+
+async function bulkDelete() {
+  const checked = Array.from(document.querySelectorAll('.row-check:checked'));
+  if (!checked.length) return;
+  const ids = checked.map(cb => cb.dataset.id);
+  const names = ids.map(id => { const r = allRegs.find(x => String(x.id)===id); return r?.fullname||id; });
+  if (!confirm(`Delete ${ids.length} registration(s)?\n\n${names.slice(0,5).join('\n')}${names.length>5?'\n…and more':''}\n\nThis cannot be undone.`)) return;
+
+  const btn = document.getElementById('bulk-delete-btn');
+  btn.textContent = '⏳ Deleting…'; btn.disabled = true;
+
+  try {
+    const { error } = await db.from('registrations').delete().in('id', ids);
+    if (error) throw error;
+    allRegs = allRegs.filter(r => !ids.includes(String(r.id)));
+    applyFilters();
+    document.getElementById('check-all').checked = false;
+    btn.style.display = 'none';
+    alert(`✅ ${ids.length} registration(s) deleted.`);
+  } catch(e) {
+    alert('❌ Bulk delete failed: ' + e.message);
+    btn.textContent = `🗑 Delete Selected (${ids.length})`;
+    btn.disabled = false;
+  }
+}
+
+// ── REVENUE LOCK ──────────────────────────────────────────────
+const CEO_PIN = 'TTR1997';
+let revenueUnlocked = false;
+function toggleRevenue() {
+  const el  = document.getElementById('stat-revenue');
+  const btn = document.getElementById('revenue-toggle-btn');
+  if (revenueUnlocked) {
+    el.style.filter = 'blur(6px)';
+    el.style.userSelect = 'none';
+    btn.textContent = '🔒 CEO Only';
+    revenueUnlocked = false;
+  } else {
+    const pin = prompt('Enter CEO PIN to view revenue:');
+    if (pin === null) return;
+    if (pin.trim() === CEO_PIN) {
+      el.style.filter = 'none';
+      el.style.userSelect = 'auto';
+      btn.textContent = '🔓 Hide';
+      revenueUnlocked = true;
+    } else {
+      alert('❌ Incorrect PIN.');
+    }
+  }
+}
+
+const GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyn48PsPyol_IYe3WHYBUuWvpVjTq4VtX_C2nIWZqBSJ7_MJHZkUbrDtbKYyBgfz7VSVQ/exec';
+const VERCEL_SYSTEM_URL = 'https://tutory-team-system-2.vercel.app/api/register';
+
+function openAddModal() {
+  ['fullname','nickname','phone','email','class-name','class-hours','amount','source','notes'].forEach(id => {
+    const el = document.getElementById('add-'+id);
+    if (el) el.value = '';
+  });
+  document.getElementById('add-plan').value = 'lunas';
+  document.getElementById('add-method').value = '';
+  document.getElementById('add-error').style.display = 'none';
+  document.getElementById('add-submit-btn').disabled = false;
+  document.getElementById('add-submit-btn').textContent = '➕ Add Student';
+  document.getElementById('add-modal').classList.add('open');
+}
+
+function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
+document.getElementById('add-modal').addEventListener('click', e => { if (e.target===e.currentTarget) closeAddModal(); });
+
+async function submitAddStudent() {
+  const btn = document.getElementById('add-submit-btn');
+  const errEl = document.getElementById('add-error');
+  errEl.style.display = 'none';
+
+  const fullname = document.getElementById('add-fullname').value.trim();
+  const phone    = document.getElementById('add-phone').value.trim();
+  const className= document.getElementById('add-class-name').value.trim();
+  const amount   = parseInt(document.getElementById('add-amount').value) || 0;
+
+  if (!fullname) { errEl.textContent='Full name is required.'; errEl.style.display='block'; return; }
+  if (!phone)    { errEl.textContent='Phone is required.'; errEl.style.display='block'; return; }
+  if (!className){ errEl.textContent='Class name is required.'; errEl.style.display='block'; return; }
+
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const rec = {
+    fullname,
+    nickname:      document.getElementById('add-nickname').value.trim() || null,
+    phone,
+    email:         document.getElementById('add-email').value.trim() || null,
+    class_name:    className,
+    class_hours:   document.getElementById('add-class-hours').value.trim() || null,
+    amount_paid:   amount,
+    payment_plan:  document.getElementById('add-plan').value,
+    payment_method:document.getElementById('add-method').value || null,
+    source:        document.getElementById('add-source').value.trim() || null,
+    notes:         document.getElementById('add-notes').value.trim() || null,
+    class_key:     'manual',
+    created_at:    new Date().toISOString(),
+  };
+
+  try {
+    // 1. Save to Supabase
+    const { data, error } = await db.from('registrations').insert([rec]).select();
+    if (error) throw error;
+
+    // 2. Sync to Google Sheet
+    try {
+      fetch(GOOGLE_SHEET_WEBHOOK_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(rec) });
+    } catch(e) {}
+
+    // 3. Sync to Vercel system
+    try {
+      fetch(VERCEL_SYSTEM_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(rec) }).catch(()=>{});
+    } catch(e) {}
+
+    // 4. Update local data
+    const newRec = data?.[0] || { ...rec, id: Date.now() };
+    allRegs.unshift(newRec);
+    applyFilters();
+    closeAddModal();
+    alert(`✅ Student "${fullname}" has been added successfully!`);
+  } catch(e) {
+    errEl.textContent = 'Error: ' + e.message;
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '➕ Add Student';
+  }
+}
+
+// ── EXPORT ───────────────────────────────────────────────────
+const EXPORT_COLS = ['created_at','fullname','nickname','gender','dob','phone','email','instagram','occupation','purpose','source','target_band','current_band','weak_skill','class_name','class_hours','class_schedule','amount_paid','payment_method','payment_plan','installment1','installment2','promo_code','promo_discount','member_code','notes','proof_url'];
+
+function toCSVRow(row) {
+  return EXPORT_COLS.map(k => {
+    let v = row[k] ?? '';
+    v = String(v).replace(/"/g,'""');
+    return `"${v}"`;
+  }).join(',');
+}
+
+function exportFilteredCSV() {
+  const header = EXPORT_COLS.join(',');
+  const rows   = filtered.map(toCSVRow);
+  const blob   = new Blob(['﻿' + header + '\n' + rows.join('\n')], { type:'text/csv;charset=utf-8;' });
+  const url    = URL.createObjectURL(blob);
+  const a      = document.createElement('a');
+  a.href = url; a.download = `tutory-registrations-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function exportFilteredXLSX() {
+  // Build a simple XLSX using SheetJS via CDN
+  if (typeof XLSX === 'undefined') {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = () => _doExportXLSX();
+    document.head.appendChild(s);
+  } else { _doExportXLSX(); }
+}
+
+function _doExportXLSX() {
+  const data = [EXPORT_COLS, ...filtered.map(r => EXPORT_COLS.map(k => r[k] ?? ''))];
+  const ws   = XLSX.utils.aoa_to_sheet(data);
+  const wb   = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Registrations');
+  XLSX.writeFile(wb, `tutory-registrations-${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+</script>
+</body>
+</html>
